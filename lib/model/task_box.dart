@@ -1,31 +1,6 @@
 import 'package:flutter/material.dart';
 import 'task.dart';
 
-class TaskBox extends StatelessWidget{
-  final Task task;
-  const TaskBox({ required this.task});
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0),
-      ),
-      color: Colors.blue[90],
-      elevation: 10,
-      child: Padding(padding: const EdgeInsets.all(10.0),
-      child:
-      ListTile(
-
-        title: Text(task.title),
-        subtitle: Text(task.description),
-        trailing: Text(task.status),
-        onTap: () {
-          print('Tapped on ${task.title}');
-        },
-      )
-    ));
-  }
-}
 class TaskCard extends StatelessWidget {
   final Task task;
 
@@ -44,7 +19,14 @@ class TaskCard extends StatelessWidget {
         child: ListTile(
 
           title: Text(task.title),
-          subtitle: Text(task.description),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(task.description),
+              Text(task.date.toString()),
+            ],
+          ),
+
           trailing: Text(task.status),
           onTap: () {
             print('Tapped on ${task.title}');
