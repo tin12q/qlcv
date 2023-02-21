@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qlcv/model/task_page.dart';
 import 'task.dart';
 
 class TaskCard extends StatelessWidget {
@@ -29,7 +30,7 @@ class TaskCard extends StatelessWidget {
 
           trailing: Text(task.status),
           onTap: () {
-            print('Tapped on ${task.title}');
+            Navigator.push(context, MaterialPageRoute(builder: (context) => TaskPage(task: task,)));
           },
         ),
       ),
