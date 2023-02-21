@@ -4,6 +4,7 @@ import 'package:clean_calendar/clean_calendar.dart';
 import 'package:qlcv/model/color_picker.dart';
 import 'package:qlcv/model/task_box.dart';
 
+import '../model/data_proc.dart';
 import '../model/task.dart';
 
 class Calendar extends StatefulWidget {
@@ -12,28 +13,6 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
-  List<Task> task = [
-    Task(
-        title: 't1',
-        description: 'd1',
-        status: 'status',
-        date: DateTime(2023, 2, 1)),
-    Task(
-        title: 't2',
-        description: 'd2',
-        status: 'status',
-        date: DateTime(2023, 2, 2)),
-    Task(
-        title: 't3',
-        description: 'd3',
-        status: 'status',
-        date: DateTime(2023, 2, 1)),
-    Task(
-        title: 't4',
-        description: 'd4',
-        status: 'status',
-        date: DateTime(2023, 2, 4)),
-  ];
   List<Task> task2 = [];
   List<DateTime> selectedDates = [];
   @override
@@ -82,11 +61,11 @@ class _CalendarState extends State<Calendar> {
                   // setState to update the calendar with new selected dates.
                   setState(() {
                     task2 = [];
-                    for (var i in task) {
+                    for (var i in DataProc.tasks) {
                       for (var j in selectedDates) {
-                        if (i.date.day == j.day &&
-                            i.date.month == j.month &&
-                            i.date.year == j.year) {
+                        if (i.endDate.day == j.day &&
+                            i.endDate.month == j.month &&
+                            i.endDate.year == j.year) {
                           task2.add(i);
                         }
                       }

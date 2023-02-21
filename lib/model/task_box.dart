@@ -35,7 +35,7 @@ class TaskCard extends StatelessWidget {
                     color: ColorPicker.primaryLight,
                     fontSize: 15,
                   )),
-              Text(task.date.toString(),
+              Text(task.endDate.toString(),
                   style: TextStyle(
                     color: ColorPicker.primaryLight,
                     fontSize: 20,

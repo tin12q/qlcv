@@ -55,3 +55,6 @@ macos/firebase_app_id_file.json
 macos/Runner/GoogleService-Info.plist
 macos/Runner.xcodeproj/project.pbxproj
 macos/Runner.xcodeproj/project.pbxproj
+macos/Runner.xcodeproj/project.pbxproj
+ios/Runner.xcodeproj/project.pbxproj
+android/build.gradle
