@@ -19,54 +19,58 @@ class TaskCard extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.all(7.0),
         child: ListTile(
-
-          title: Text(
-              task.title,
-            style: TextStyle(
-              color: ColorPicker.primaryLight,
-              fontSize: 30,
-            )),
+          title: Text(task.title,
+              style: TextStyle(
+                color: ColorPicker.primaryLight,
+                fontSize: 30,
+              )),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text((task.description.length>15)?
-              task.description.substring(0,15)+'...':task.description,
-                style: TextStyle(
-                  color: ColorPicker.primaryLight,
-                  fontSize: 15,
-                )),
+              Text(
+                  (task.description.length > 15)
+                      ? task.description.substring(0, 15) + '...'
+                      : task.description,
+                  style: TextStyle(
+                    color: ColorPicker.primaryLight,
+                    fontSize: 15,
+                  )),
               Text(task.date.toString(),
-                style: TextStyle(
-                  color: ColorPicker.primaryLight,
-                  fontSize: 20,
-                )),
+                  style: TextStyle(
+                    color: ColorPicker.primaryLight,
+                    fontSize: 20,
+                  )),
             ],
           ),
-
           trailing: Text(task.status,
-            style: TextStyle(
-              color: ColorPicker.primaryLight,
-              fontSize: 20,
-            )),
+              style: TextStyle(
+                color: ColorPicker.primaryLight,
+                fontSize: 20,
+              )),
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => TaskPage(task: task,)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => TaskPage(
+                          task: task,
+                        )));
           },
         ),
       ),
     );
   }
-
-
 }
+
 class TaskBoxList extends StatelessWidget {
   final List<Task> tasks;
 
-  TaskBoxList({required this.tasks});
+  TaskBoxList({
+    required this.tasks,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-
       itemCount: tasks.length,
       itemBuilder: (context, index) => Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -77,11 +81,10 @@ class TaskBoxList extends StatelessWidget {
           ),
           SizedBox(width: 10)
         ],
-
-      ), separatorBuilder: (BuildContext context, int index) {
+      ),
+      separatorBuilder: (BuildContext context, int index) {
         return SizedBox(height: 15);
-    },
-
+      },
     );
   }
 }
