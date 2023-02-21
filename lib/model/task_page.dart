@@ -11,9 +11,9 @@ class TaskPage extends StatefulWidget{
 class _TaskPageState extends State<TaskPage>{
   @override
   Widget build(BuildContext context) {
-    return SafeArea(child:
+    return
       Scaffold(
-        body: Column(
+        body:SafeArea(child: Column(
         children: [
 
           Text(widget.task.title),
