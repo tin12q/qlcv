@@ -50,3 +50,8 @@ ios/Runner/GoogleService-Info.plist
 ios/Runner.xcodeproj/project.pbxproj
 .gitignore
 android/build.gradle
+macos/firebase_app_id_file.json
+.gitignore
+macos/Runner/GoogleService-Info.plist
+macos/Runner.xcodeproj/project.pbxproj
+macos/Runner.xcodeproj/project.pbxproj
