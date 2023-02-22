@@ -4,11 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 //import '../firebase_options.dart';
 
-class DataProc {
+class DBHelper {
   static List<Task> tasks = [];
-  static Future<void> TaskUpdate() async {
+  static Future<void> taskUpdate() async {
 
-    if (1==1) {
+
       try {
         var db = FirebaseFirestore.instance;
 
@@ -20,6 +20,7 @@ class DataProc {
               title: doc['Title'],
               description: doc['Description'],
               status: doc['Status'],
+              dep: doc['Department'],
               startDate: (doc['Start Date'] as Timestamp).toDate(),
               endDate: (doc['Due Date'] as Timestamp).toDate()));
         });
@@ -29,11 +30,11 @@ class DataProc {
         // ignore: avoid_print
         print(e);
       }
-    }
+
     //await cr.add({'title': 'test', 'description': 'test', 'status': 'test', 'startDate': 'test', 'endDate': 'test'});
   }
 
-  static void AddTask(Task task) {
+  static void addTask(Task task) {
     CollectionReference fbTask = FirebaseFirestore.instance.collection('tasks');
     fbTask.add({
       'title': task.title,

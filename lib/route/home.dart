@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:qlcv/model/task_box.dart';
 import 'package:qlcv/model/color_picker.dart';
 
-import '../model/data_proc.dart';
+import '../model/db_helper.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -25,29 +25,28 @@ class _HomeState extends State<Home> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               SafeArea(
-                child: Container(
-                  child: InkWell(
+                child:  InkWell(
                     onTap: () {
                       print('tap');
                     },
-                    child: CircleAvatar(
+                    child: const CircleAvatar(
+                      backgroundColor: ColorPicker.accent,
+                      //size
+                      radius: 25,
                       child: Icon(
                         Icons.add,
                         color: ColorPicker.primary,
                       ),
-                      backgroundColor: ColorPicker.accent,
-                      //size
-                      radius: 25,
                     ),
                   ),
-                ),
+
               ),
-              SizedBox(width: 20),
+              const SizedBox(width: 20),
             ],
           ),
         ),
         Expanded(
-          child: TaskBoxList(tasks: DataProc.tasks),
+          child: TaskBoxList(tasks: DBHelper.tasks),
         )
       ],
     )));

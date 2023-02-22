@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'model/data_proc.dart';
+import 'model/db_helper.dart';
 //import 'model/task.dart';
 
+import 'route/dashboard.dart';
 import 'route/home.dart';
 import 'route/calendar.dart';
 import 'route/menu.dart';
@@ -15,13 +16,13 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  DataProc.TaskUpdate();
-  //print(DataProc.tasks.first);
-  runApp(MyApp());
+  DBHelper.taskUpdate();
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
-  MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
   @override
   State<MyApp> createState() => _MyAppState();
 }
@@ -29,10 +30,12 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   int _selectedIndex = 0;
 
-  static List<Widget> _widgetOptions = <Widget>[
+  final List<Widget> _widgetOptions = <Widget>[
+    Dashboard(),
     Home(),
     Calendar(),
-    Menu(),
+    const Menu(),
+
   ];
 
   @override
@@ -40,8 +43,8 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
-          scaffoldBackgroundColor: ColorPicker.primary,
-          primarySwatch: Colors.blue,
+          scaffoldBackgroundColor: ColorPicker.background,
+
         ),
         home: Scaffold(
             body: _widgetOptions.elementAt(_selectedIndex),
@@ -72,26 +75,41 @@ class _MyAppState extends State<MyApp> {
                 });
               },
             )*/
-            bottomNavigationBar: SafeArea(
+            bottomNavigationBar: Container(
+              color: ColorPicker.primary,
+          child:SafeArea(
               child: GNav(
-                gap: 8,
-                activeColor: ColorPicker.primaryLight,
-                iconSize: 24,
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                duration: Duration(milliseconds: 300),
+                gap: 5,
+                activeColor: ColorPicker.primary,
+                color: ColorPicker.dark,
+                rippleColor: ColorPicker.primary,
+                hoverColor: ColorPicker.accent,
+                iconSize: 19,
+                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                duration: const Duration(milliseconds: 300),
                 tabBackgroundColor: ColorPicker.accent,
-                tabs: [
+                backgroundColor: ColorPicker.primary,
+
+                tabs: const [
+                  GButton(
+                    icon: Icons.dashboard_outlined,
+
+
+                  ),
                   GButton(
                     icon: Icons.home_outlined,
                     text: 'Home',
+
                   ),
                   GButton(
                     icon: Icons.calendar_month_outlined,
                     text: 'Calendar',
+
                   ),
                   GButton(
                     icon: Icons.menu_outlined,
                     text: 'Menu',
+
                   ),
                 ],
                 selectedIndex: 0,
@@ -101,6 +119,6 @@ class _MyAppState extends State<MyApp> {
                   });
                 },
               ),
-            )));
-  }
+            )))
+    );}
 }

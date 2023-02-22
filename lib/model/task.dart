@@ -4,6 +4,7 @@ class Task {
   String _title = '';
   String _description = '';
   String _status = '';
+  String _dep='';
   DateTime _startDate = DateTime.now();
   DateTime _endDate = DateTime.now();
 
@@ -12,16 +13,19 @@ class Task {
   get status => _status;
   get startDate => _startDate;
   get endDate => _endDate;
+  get dep => _dep;
   set title(title) => _title = title;
   set description(description) => _description = description;
   set status(status) => _status = status;
   set startDate(sdate) => _startDate = sdate;
   set endDate(edate) => _endDate = edate;
+  set dep(dep) => _dep = dep;
 
   Task(
       {required String title,
       required String description,
       required String status,
+        required String dep,
       required DateTime startDate,
       required DateTime endDate}) {
     _title = title;
@@ -29,6 +33,7 @@ class Task {
     _status = status;
     _startDate = startDate;
     _endDate = endDate;
+    _dep = dep;
   }
 
   @override

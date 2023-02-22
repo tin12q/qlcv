@@ -6,7 +6,7 @@ import 'task.dart';
 class TaskCard extends StatelessWidget {
   final Task task;
 
-  TaskCard({required this.task});
+  const TaskCard({required this.task});
 
   @override
   Widget build(BuildContext context) {
@@ -14,37 +14,42 @@ class TaskCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20.0),
       ),
-      color: ColorPicker.primaryDark,
+      color: ColorPicker.accent,
       elevation: 5,
       child: Padding(
-        padding: EdgeInsets.all(7.0),
+        padding: EdgeInsets.all(10.0),
         child: ListTile(
+
           title: Text(task.title,
-              style: TextStyle(
-                color: ColorPicker.primaryLight,
+              style: const TextStyle(
+                color: ColorPicker.primary,
                 fontSize: 30,
               )),
+
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 5),
               Text(
                   (task.description.length > 15)
                       ? task.description.substring(0, 15) + '...'
                       : task.description,
-                  style: TextStyle(
-                    color: ColorPicker.primaryLight,
-                    fontSize: 15,
-                  )),
-              Text(task.endDate.toString(),
-                  style: TextStyle(
-                    color: ColorPicker.primaryLight,
+                  style: const TextStyle(
+                    color: ColorPicker.primary,
                     fontSize: 20,
                   )),
+              const SizedBox(height: 10),
+              Text(task.endDate.toString(),
+                  style: const TextStyle(
+                    color: ColorPicker.primary,
+                    fontSize: 13,
+                  )),
+              //const SizedBox(height: 10),
             ],
           ),
           trailing: Text(task.status,
-              style: TextStyle(
-                color: ColorPicker.primaryLight,
+              style: const TextStyle(
+                color: ColorPicker.primary,
                 fontSize: 20,
               )),
           onTap: () {
@@ -64,7 +69,7 @@ class TaskCard extends StatelessWidget {
 class TaskBoxList extends StatelessWidget {
   final List<Task> tasks;
 
-  TaskBoxList({
+  const TaskBoxList({
     required this.tasks,
   });
 
