@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'model/task.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'model/data_proc.dart';
+//import 'model/task.dart';
 
 import 'route/home.dart';
 import 'route/calendar.dart';
 import 'route/menu.dart';
 import 'package:qlcv/model/color_picker.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  DataProc.TaskUpdate();
+  //print(DataProc.tasks.first);
   runApp(MyApp());
 }
 
