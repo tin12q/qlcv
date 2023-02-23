@@ -14,6 +14,8 @@ class Task {
   get startDate => _startDate;
   get endDate => _endDate;
   get dep => _dep;
+  get startDateString => _startDate.day.toString()+'/'+_startDate.month.toString()+'/'+_startDate.year.toString();
+  get endDateString => _endDate.day.toString()+'/'+_endDate.month.toString()+'/'+_endDate.year.toString();
   set title(title) => _title = title;
   set description(description) => _description = description;
   set status(status) => _status = status;
@@ -35,6 +37,7 @@ class Task {
     _endDate = endDate;
     _dep = dep;
   }
+
 
   @override
   String toString() {

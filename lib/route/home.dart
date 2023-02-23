@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 //import 'package:qlcv/model/task.dart';
 import 'package:qlcv/model/task_box.dart';
 import 'package:qlcv/model/color_picker.dart';
+
 
 import '../model/db_helper.dart';
 
@@ -12,6 +14,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -21,9 +25,20 @@ class _HomeState extends State<Home> {
         Container(
           height: 60,
           child: Row(
+
             //right to left
             mainAxisAlignment: MainAxisAlignment.end,
+
             children: [
+              const Text(
+               'a',
+                style: TextStyle(
+                  color: ColorPicker.fontDark,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(width: 60),
               SafeArea(
                 child:  InkWell(
                     onTap: () {
@@ -32,7 +47,7 @@ class _HomeState extends State<Home> {
                     child: const CircleAvatar(
                       backgroundColor: ColorPicker.accent,
                       //size
-                      radius: 25,
+                      radius: 20,
                       child: Icon(
                         Icons.add,
                         color: ColorPicker.primary,
@@ -41,7 +56,7 @@ class _HomeState extends State<Home> {
                   ),
 
               ),
-              const SizedBox(width: 20),
+              const SizedBox(width: 30),
             ],
           ),
         ),

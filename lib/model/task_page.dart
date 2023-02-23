@@ -1,32 +1,84 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qlcv/main.dart';
+import 'color_picker.dart';
 import 'task.dart';
 
-class TaskPage extends StatefulWidget{
+import 'package:flutter/material.dart';
+
+class TaskPage extends StatefulWidget {
   final Task task;
-  const TaskPage({required this.task});
-  @override
-  State<TaskPage> createState() => _TaskPageState();
+
+  const TaskPage({
+    Key? key,
+    required this.task,
+  }) : super(key: key);
+  State<TaskPage> createState() => _TaskPageState(task: task);
 }
-class _TaskPageState extends State<TaskPage>{
+class _TaskPageState extends State<TaskPage> {
+  late Task task;
+  _TaskPageState({required this.task});
+  @override
   @override
   Widget build(BuildContext context) {
-    return
-      Scaffold(
-        body:SafeArea(child: Column(
-        children: [
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Task Details'),
 
-          Text(widget.task.title),
-          Text(widget.task.description),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp()));
-            },
-            child: Text('Back'),
-          )
-        ]
+        backgroundColor: ColorPicker.accent,
+        leading: IconButton(
+          icon: Icon(CupertinoIcons.back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+
+        ),
       ),
-    )
-    );
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                task.title,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'Description: ${task.description}',
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'Department: ${task.dep}',
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'Start Date: ${task.startDate.toString()}',
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'End Date: ${task.endDate.toString()}',
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+
+
   }
 }
