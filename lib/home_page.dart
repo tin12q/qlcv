@@ -13,6 +13,7 @@ import 'route/home.dart';
 import 'route/calendar.dart';
 import 'route/menu.dart';
 import 'package:qlcv/model/color_picker.dart';
+
 class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();
@@ -24,11 +25,10 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> _widgetOptions = <Widget>[
     Dashboard(),
-    Home(),
-    Calendar(),
+    const Home(),
+    const Calendar(),
     const Menu(),
   ];
-
 
   Future<void> loadData() async {
     if (!_dataLoaded) {
@@ -43,8 +43,11 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     if (!_dataLoaded) {
       loadData();
-      return Center(
-        child: CircularProgressIndicator(),
+      return const Center(
+        child: CircularProgressIndicator(
+          color: ColorPicker.accent,
+          backgroundColor: ColorPicker.background,
+        ),
       );
     }
     return Scaffold(
@@ -78,38 +81,40 @@ class _HomePageState extends State<HomePage> {
 
   final _tabs = (Platform.isIOS)
       ? const [
-    GButton(icon: CupertinoIcons.square_grid_2x2,
-      iconSize: 25,),
-    GButton(
-      icon: CupertinoIcons.home,
-      iconSize: 25,
-      text: 'Home',
-    ),
-    GButton(
-      icon: CupertinoIcons.calendar_today,
-      iconSize: 25,
-      text: 'Calendar',
-    ),
-    GButton(
-      icon: CupertinoIcons.bars,
-      iconSize: 25,
-    ),
-  ]
+          GButton(
+            icon: CupertinoIcons.square_grid_2x2,
+            iconSize: 25,
+          ),
+          GButton(
+            icon: CupertinoIcons.home,
+            iconSize: 25,
+            text: 'Home',
+          ),
+          GButton(
+            icon: CupertinoIcons.calendar_today,
+            iconSize: 25,
+            text: 'Calendar',
+          ),
+          GButton(
+            icon: CupertinoIcons.bars,
+            iconSize: 25,
+          ),
+        ]
       : const [
-    GButton(
-      icon: Icons.dashboard_outlined,
-    ),
-    GButton(
-      icon: Icons.home_outlined,
-      text: 'Home',
-    ),
-    GButton(
-      icon: Icons.calendar_month_outlined,
-      text: 'Calendar',
-    ),
-    GButton(
-      icon: Icons.menu_outlined,
-      text: 'Menu',
-    )
-  ];
+          GButton(
+            icon: Icons.dashboard_outlined,
+          ),
+          GButton(
+            icon: Icons.home_outlined,
+            text: 'Home',
+          ),
+          GButton(
+            icon: Icons.calendar_month_outlined,
+            text: 'Calendar',
+          ),
+          GButton(
+            icon: Icons.menu_outlined,
+            text: 'Menu',
+          )
+        ];
 }

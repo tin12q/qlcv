@@ -4,7 +4,7 @@ class Task {
   String _title = '';
   String _description = '';
   String _status = '';
-  String _dep='';
+  String _dep = '';
   DateTime _startDate = DateTime.now();
   DateTime _endDate = DateTime.now();
 
@@ -14,8 +14,10 @@ class Task {
   get startDate => _startDate;
   get endDate => _endDate;
   get dep => _dep;
-  get startDateString => _startDate.day.toString()+'/'+_startDate.month.toString()+'/'+_startDate.year.toString();
-  get endDateString => _endDate.day.toString()+'/'+_endDate.month.toString()+'/'+_endDate.year.toString();
+  get startDateString =>
+      '${_startDate.day.toString()}/${_startDate.month.toString()}/${_startDate.year.toString()}';
+  get endDateString =>
+      '${_endDate.day.toString()}/${_endDate.month.toString()}/${_endDate.year.toString()}';
   set title(title) => _title = title;
   set description(description) => _description = description;
   set status(status) => _status = status;
@@ -27,7 +29,7 @@ class Task {
       {required String title,
       required String description,
       required String status,
-        required String dep,
+      required String dep,
       required DateTime startDate,
       required DateTime endDate}) {
     _title = title;
@@ -37,7 +39,6 @@ class Task {
     _endDate = endDate;
     _dep = dep;
   }
-
 
   @override
   String toString() {

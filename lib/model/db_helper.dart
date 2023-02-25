@@ -7,29 +7,24 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class DBHelper {
   static List<Task> tasks = [];
   static Future<void> taskUpdate() async {
+    try {
+      var db = FirebaseFirestore.instance;
 
-
-      try {
-        var db = FirebaseFirestore.instance;
-
-
-        CollectionReference cr = db.collection('tasks');
-        QuerySnapshot qs = await cr.get();
-        qs.docs.forEach((doc) {
-          tasks.add(Task(
-              title: doc['Title'],
-              description: doc['Description'],
-              status: doc['Status'],
-              dep: doc['Department'],
-              startDate: (doc['Start Date'] as Timestamp).toDate(),
-              endDate: (doc['Due Date'] as Timestamp).toDate()));
-        });
-
-
-      } catch (e) {
-        // ignore: avoid_print
-        print(e);
+      CollectionReference cr = db.collection('tasks');
+      QuerySnapshot qs = await cr.get();
+      for (var doc in qs.docs) {
+        tasks.add(Task(
+            title: doc['Title'],
+            description: doc['Description'],
+            status: doc['Status'],
+            dep: doc['Department'],
+            startDate: (doc['Start Date'] as Timestamp).toDate(),
+            endDate: (doc['Due Date'] as Timestamp).toDate()));
       }
+    } catch (e) {
+      // ignore: avoid_print
+      print(e);
+    }
 
     //await cr.add({'title': 'test', 'description': 'test', 'status': 'test', 'startDate': 'test', 'endDate': 'test'});
   }
@@ -43,5 +38,9 @@ class DBHelper {
       'startDate': task.startDate,
       'endDate': task.endDate,
     });
+  }
+
+  static reset() {
+    tasks.clear();
   }
 }

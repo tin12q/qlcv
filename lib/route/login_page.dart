@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:qlcv/home_page.dart';
 
+import '../model/color_picker.dart';
+
 class SignInPage extends StatefulWidget {
   @override
   _SignInPageState createState() => _SignInPageState();
@@ -17,9 +19,6 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Sign In'),
-      ),
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
@@ -27,41 +26,91 @@ class _SignInPageState extends State<SignInPage> {
             child: Form(
               key: _formKey,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  TextFormField(
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                    ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your email';
-                      }
-                      return null;
-                    },
+                  const Text(
+                    'Sign in',
+                    style: TextStyle(
+                        fontSize: 30.0,
+                        fontWeight: FontWeight.bold,
+                        color: ColorPicker.accent),
                   ),
-                  SizedBox(height: 16.0),
-                  TextFormField(
-                    controller: _passwordController,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
+                  const SizedBox(height: 50.0),
+                  Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.0),
                     ),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your password';
-                      }
-                      return null;
-                    },
+                    elevation: 8.0,
+                    child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              controller: _emailController,
+                              keyboardType: TextInputType.emailAddress,
+                              decoration: const InputDecoration(
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: ColorPicker.accent),
+                                ),
+                                labelStyle:
+                                    TextStyle(color: ColorPicker.accent),
+                                labelText: 'Email',
+                              ),
+                              cursorColor: ColorPicker.accent,
+                              validator: (String? value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your email';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 16.0),
+                            TextFormField(
+                              controller: _passwordController,
+                              obscureText: true,
+                              decoration: const InputDecoration(
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: ColorPicker.accent),
+                                ),
+                                //selected color
+
+                                labelStyle:
+                                    TextStyle(color: ColorPicker.accent),
+                                labelText: 'Password',
+                              ),
+                              cursorColor: ColorPicker.accent,
+                              validator: (String? value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your password';
+                                }
+                                return null;
+                              },
+                            ),
+                          ],
+                        )),
                   ),
-                  SizedBox(height: 16.0),
-                  ElevatedButton(
-                    onPressed: _isLoading ? null : _signIn,
-                    child: _isLoading
-                        ? CircularProgressIndicator()
-                        : Text('Sign In'),
+                  const SizedBox(height: 25.0),
+                  Container(
+                    width: 120,
+                    height: 50,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        elevation: 8.0,
+                        backgroundColor: ColorPicker.accent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                      ),
+                      onPressed: _isLoading ? null : _signIn,
+                      child: _isLoading
+                          ? const CircularProgressIndicator(
+                              color: ColorPicker.accent,
+                              backgroundColor: ColorPicker.background,
+                            )
+                          : const Text('Sign In'),
+                    ),
                   ),
                 ],
               ),
@@ -84,10 +133,13 @@ class _SignInPageState extends State<SignInPage> {
     try {
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim());
+              email: _emailController.text.trim(),
+              password: _passwordController.text.trim());
+      //change route home
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(
+          builder: (context) => HomePage(),
+        ),
       );
     } on FirebaseAuthException catch (e) {
       String errorMessage = 'An error occurred, please check your credentials';
@@ -98,7 +150,9 @@ class _SignInPageState extends State<SignInPage> {
       }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(errorMessage),
+          content:
+              Text(errorMessage, style: TextStyle(color: ColorPicker.primary)),
+          backgroundColor: ColorPicker.accent,
           duration: Duration(seconds: 5),
         ),
       );

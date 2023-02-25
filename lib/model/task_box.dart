@@ -19,7 +19,6 @@ class TaskCard extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.all(10.0),
         child: ListTile(
-
           title: Text(task.title,
               style: const TextStyle(
                 color: ColorPicker.primary,
@@ -27,7 +26,6 @@ class TaskCard extends StatelessWidget {
                 fontWeight: FontWeight.bold,
                 fontSize: 30,
               )),
-
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -51,39 +49,36 @@ class TaskCard extends StatelessWidget {
               //const SizedBox(height: 10),
             ],
           ),
-
           trailing: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(task.status,
-              style: const TextStyle(
-                color: ColorPicker.primary,
-                fontSize: 20,
-              )),
-                SizedBox(height: 2),
+                    style: const TextStyle(
+                      color: ColorPicker.primary,
+                      fontSize: 20,
+                    )),
+                const SizedBox(height: 2),
                 Container(
-                  height: 30,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: ColorPicker.primary,
-                      onPrimary: ColorPicker.accent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                    height: 30,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ColorPicker.primary,
+                        foregroundColor: ColorPicker.accent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
                       ),
-                    ),
-                    child: Text('Info'),
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => TaskPage(
-                                    task: task,
-                                  )));
-                    },
-                  )
-                ),
-
+                      child: const Text('Info'),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => TaskPage(
+                                      task: task,
+                                    )));
+                      },
+                    )),
               ]),
           onTap: () {
             /*Navigator.push(
@@ -119,19 +114,20 @@ class TaskBoxList extends StatelessWidget {
       itemBuilder: (context, index) => Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           Expanded(
             child: TaskCard(task: tasks[index]),
           ),
-          SizedBox(width: 10)
+          const SizedBox(width: 10)
         ],
       ),
       separatorBuilder: (BuildContext context, int index) {
-        return SizedBox(height: 15);
+        return const SizedBox(height: 15);
       },
     );
   }
 }
+
 class TaskPopupCard extends StatelessWidget {
   final Task task;
 
@@ -140,7 +136,6 @@ class TaskPopupCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-
       elevation: 10,
       backgroundColor: ColorPicker.accent,
       shape: RoundedRectangleBorder(
@@ -149,65 +144,62 @@ class TaskPopupCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 50.0),
         child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  task.title,
-                  style: const TextStyle(
-                    color: ColorPicker.primary,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 30.0,
-                  ),
-                ),
-                const SizedBox(height: 10.0),
-                Text(
-                  'Status: ${task.status}',
-                  style: const TextStyle(
-                    color: ColorPicker.primary,
-                    //bold
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20.0,
-                  ),
-                ),
-                const SizedBox(height: 10.0),
-
-                Text(
-                  task.description,
-                  style: const TextStyle(
-                    color: ColorPicker.primary,
-                    fontSize: 20.0,
-                  ),
-                ),
-
-                const SizedBox(height: 10.0),
-                Text(
-                  'Department: ${task.dep}',
-                  style: const TextStyle(
-                    color: ColorPicker.primary,
-                    fontSize: 20.0,
-                  ),
-                ),
-                const SizedBox(height: 10.0),
-                Text(
-                  'Start Date: ${task.startDateString}',
-                  style: const TextStyle(
-                    color: ColorPicker.primary,
-                    fontSize: 20.0,
-                  ),
-                ),
-                const SizedBox(height: 10.0),
-                Text(
-                  'End Date: ${task.endDateString}',
-                  style: const TextStyle(
-                    color: ColorPicker.primary,
-                    fontSize: 20.0,
-                  ),
-                ),
-              ],
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              task.title,
+              style: const TextStyle(
+                color: ColorPicker.primary,
+                fontWeight: FontWeight.bold,
+                fontSize: 30.0,
+              ),
             ),
-          ),
-        );
+            const SizedBox(height: 10.0),
+            Text(
+              'Status: ${task.status}',
+              style: const TextStyle(
+                color: ColorPicker.primary,
+                //bold
+                fontWeight: FontWeight.bold,
+                fontSize: 20.0,
+              ),
+            ),
+            const SizedBox(height: 10.0),
+            Text(
+              task.description,
+              style: const TextStyle(
+                color: ColorPicker.primary,
+                fontSize: 20.0,
+              ),
+            ),
+            const SizedBox(height: 10.0),
+            Text(
+              'Department: ${task.dep}',
+              style: const TextStyle(
+                color: ColorPicker.primary,
+                fontSize: 20.0,
+              ),
+            ),
+            const SizedBox(height: 10.0),
+            Text(
+              'Start Date: ${task.startDateString}',
+              style: const TextStyle(
+                color: ColorPicker.primary,
+                fontSize: 20.0,
+              ),
+            ),
+            const SizedBox(height: 10.0),
+            Text(
+              'End Date: ${task.endDateString}',
+              style: const TextStyle(
+                color: ColorPicker.primary,
+                fontSize: 20.0,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
-

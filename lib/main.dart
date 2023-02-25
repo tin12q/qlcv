@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:qlcv/model/color_picker.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
+import 'home_page.dart';
 import 'model/color_picker.dart';
 import 'model/db_helper.dart';
 //import 'model/task.dart';
@@ -21,9 +22,14 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp( MaterialApp(
+    initialRoute: '/login',
+    routes: {
+      '/login': (context) => SignInPage(),
+      '/home': (context) => HomePage(),
+    },
+
     debugShowCheckedModeBanner: false,
 
-      home: SignInPage()
   )
   );
 }
