@@ -34,7 +34,10 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> loadData() async {
     if (!_dataLoaded) {
+      await DBHelper.getEmp();
       await DBHelper.taskUpdate();
+      DBHelper.initMap();
+      await DBHelper.updateTaskEMP();
       setState(() {
         _dataLoaded = true;
       });

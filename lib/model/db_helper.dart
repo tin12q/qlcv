@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:qlcv/model/task.dart';
 //import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,6 +11,28 @@ class DBHelper {
   static List<Task> tasks = [];
   static Employee mainUser =
       Employee(name: '', email: '', dep: '', role: '', id: '');
+  static List<Employee> employees = [];
+  static var empMap = {};
+  static Future<void> getEmp() async {
+    try {
+      var db = FirebaseFirestore.instance;
+      CollectionReference cr = db.collection('Emp');
+      QuerySnapshot qs = await cr.get();
+      for (var doc in qs.docs) {
+        //if (doc['Role'] == 'Emp') {
+        employees.add(Employee(
+            name: doc['Name'],
+            email: doc['Email'],
+            dep: doc['Dep'],
+            role: doc['Role'],
+            id: doc['Id']));
+        //}
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   static Future<void> getMainUser({required String email}) async {
     try {
       var db = FirebaseFirestore.instance;
@@ -29,36 +54,22 @@ class DBHelper {
     try {
       var db = FirebaseFirestore.instance;
 
-      CollectionReference cr = db.collection('tasks');
+      CollectionReference cr = db.collection('Tasks');
       QuerySnapshot qs = (mainUser.role == 'Admin')
-          ? await cr.get()
-          : await cr.where('Department', isEqualTo: mainUser.dep).get();
-      //QuerySnapshot qs = await cr.get();
-      //print(mainUser.dep);
-      // await FirebaseFirestore.instance
-      //     .collection('tasks')
-      //     .where('Department', isEqualTo: mainUser.dep)
-      //     .get()
-      //     .then((value) => {
-      //           for (var doc in value.docs)
-      //             {
-      //               tasks.add(Task(
-      //                   title: doc['Title'],
-      //                   description: doc['Description'],
-      //                   status: doc['Status'],
-      //                   dep: doc['Department'],
-      //                   startDate: (doc['Start Date'] as Timestamp).toDate(),
-      //                   endDate: (doc['Due Date'] as Timestamp).toDate()))
-      //             }
-      //         });
+          ? await cr.orderBy('Status').get()
+          : await cr
+              .orderBy('Status')
+              .where('Dep', isEqualTo: mainUser.dep)
+              .get();
       for (var doc in qs.docs) {
         tasks.add(Task(
             title: doc['Title'],
-            description: doc['Description'],
+            description: doc['Desc'],
             status: doc['Status'],
-            dep: doc['Department'],
-            startDate: (doc['Start Date'] as Timestamp).toDate(),
-            endDate: (doc['Due Date'] as Timestamp).toDate()));
+            dep: doc['Dep'],
+            startDate: (doc['Start'] as Timestamp).toDate(),
+            endDate: (doc['End'] as Timestamp).toDate(),
+            emp: List<String>.from(doc['Emp'])));
       }
     } catch (e) {
       // ignore: avoid_print
@@ -121,15 +132,108 @@ class DBHelper {
   //   }
   // }
 
-  static void addTask(Task task) {
-    CollectionReference fbTask = FirebaseFirestore.instance.collection('tasks');
+  static Future<void> addTask(Task task) async {
+    try {
+      CollectionReference fbTask =
+          FirebaseFirestore.instance.collection('Tasks');
+      fbTask.add({
+        'Title': task.title,
+        'Desc': task.description,
+        'Status': task.status,
+        'Start': Timestamp.fromDate(task.startDate),
+        'Dep': task.dep,
+        'End': Timestamp.fromDate(task.endDate),
+        'Emp': task.emp,
+      });
+    } on Exception catch (e) {
+      // TODO:
+      print(e);
+    }
+  }
+
+  // static updateUid() {
+  //   final FirebaseAuth auth = FirebaseAuth.instance;
+  //   final User? user = auth.currentUser;
+  //   final uid = user!.uid;
+  //   CollectionReference fbTask = FirebaseFirestore.instance.collection('Emp');
+  //   //add uid to firebase where email is equal to email
+  //   fbTask
+  //       .where('Email', isEqualTo: user.email)
+  //       .get()
+  //       .then((value) => value.docs[0].reference.update({'Id': uid}));
+  // }
+  static updateDep() {
+    CollectionReference fbTask = FirebaseFirestore.instance.collection('Emp');
+    //add uid to firebase where email is equal to email
+    fbTask.get().then((value) => {
+          //random 1-3
+
+          for (var doc in value.docs)
+            {
+              doc.reference.update({'Dep': 'Dep${Random().nextInt(3) + 1}'})
+            }
+        });
+  }
+
+  static createUser(
+      {required String name,
+      required String email,
+      required String role,
+      required String dep}) {
+    //create firebase auth user with email and password
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+    _auth.createUserWithEmailAndPassword(email: email, password: 'abcdef');
+    //get this user uid
+    final User? user = _auth.currentUser;
+    final uid = user!.uid;
+
+    CollectionReference fbTask = FirebaseFirestore.instance.collection('Emp');
+
     fbTask.add({
-      'title': task.title,
-      'description': task.description,
-      'status': task.status,
-      'startDate': task.startDate,
-      'endDate': task.endDate,
+      'Name': name,
+      'Email': email,
+      'Role': role,
+      'Dep': dep,
+      'Id': uid,
     });
+  }
+
+  //update Uid of all Employees in firebase to match their Uid in firebase auth
+  static updateUID() async {
+    try {
+      CollectionReference fbTask = FirebaseFirestore.instance.collection('Emp');
+      fbTask.get().then((value) => {
+            for (var doc in value.docs)
+              {
+                FirebaseAuth.instance.signOut(),
+                //delay to allow signout
+                Future.delayed(const Duration(seconds: 2)),
+                FirebaseAuth.instance.signInWithEmailAndPassword(
+                  email: doc['Email'],
+                  password: 'abcdef',
+                ),
+                Future.delayed(const Duration(seconds: 2)),
+                doc.reference
+                    .update({'Id': FirebaseAuth.instance.currentUser!.uid})
+              }
+          });
+    } on Exception catch (e) {
+      // TODO
+      print(e);
+    }
+  }
+
+  //update emp list of task from uid to name
+  static updateTaskEMP() {
+    for (Task task in tasks) {
+      for (var i = 0; i < task.emp.length; i++) {
+        task.emp[i] = empMap[task.emp[i]].name;
+      }
+    }
+  }
+
+  static void initMap() {
+    empMap = Map.fromIterable(employees, key: (e) => e.id, value: (e) => e);
   }
 
   static reset() {

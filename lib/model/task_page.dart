@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qlcv/main.dart';
+import 'package:qlcv/model/db_helper.dart';
 import 'color_picker.dart';
 import 'task.dart';
 
@@ -34,47 +35,72 @@ class _TaskPageState extends State<TaskPage> {
           },
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              task.title,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                task.title,
+                style: const TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Description: ${task.description}',
-              style: const TextStyle(
-                fontSize: 18,
+              const SizedBox(height: 8.0),
+              const Text(
+                'Description',
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Department: ${task.dep}',
-              style: const TextStyle(
-                fontSize: 18,
+              const SizedBox(height: 8.0),
+              Text(
+                task.description,
+                style: const TextStyle(fontSize: 16.0),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Start Date: ${task.startDate.toString()}',
-              style: const TextStyle(
-                fontSize: 18,
+              const SizedBox(height: 16.0),
+              const Text(
+                'Start Date',
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'End Date: ${task.endDate.toString()}',
-              style: const TextStyle(
-                fontSize: 18,
+              const SizedBox(height: 8.0),
+              Text(
+                task.startDateString,
+                style: const TextStyle(fontSize: 16.0),
               ),
-            ),
-          ],
+              const SizedBox(height: 16.0),
+              const Text(
+                'End Date',
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8.0),
+              Text(
+                task.endDateString,
+                style: const TextStyle(fontSize: 16.0),
+              ),
+              const SizedBox(height: 16.0),
+              const Text(
+                'Status',
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8.0),
+              Text(
+                task.status,
+                style: const TextStyle(fontSize: 16.0),
+              ),
+              const SizedBox(height: 16.0),
+              const Text(
+                'Assigned Employees',
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8.0),
+              Wrap(
+                spacing: 8.0,
+                runSpacing: 8.0,
+                children: task.empWidget,
+              ),
+            ],
+          ),
         ),
       ),
     );

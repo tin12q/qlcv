@@ -1,16 +1,17 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:qlcv/model/db_helper.dart';
 
-class Menu extends StatefulWidget{
+class Menu extends StatefulWidget {
   const Menu({Key? key}) : super(key: key);
   @override
   State<Menu> createState() => _MenuState();
 }
+
 class _MenuState extends State<Menu> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -31,17 +32,19 @@ class _MenuState extends State<Menu> {
       ),
     );
   }
-  void logout(BuildContext context) {
+
+  void logout(BuildContext context) async {
     // TODO: Implement logout functionality
     // For example, clear the user's session or token
     // And navigate to the login page
 
     // Navigate to the login page
     DBHelper.reset();
+    await FirebaseAuth.instance.signOut();
     Navigator.pushNamedAndRemoveUntil(
       context,
       '/login',
-          (route) => false,
+      (route) => false,
     );
   }
 }

@@ -85,7 +85,7 @@ class _DashboardState extends State<Dashboard> {
         taskCounts[task.dep] = [0, 0];
       }
       taskCounts[task.dep]![0]++;
-      if (task.endDate.isBefore(DateTime.now()) && task.status == 'Late') {
+      if (task.status == 'Late') {
         taskCounts[task.dep]![1]++;
       }
     }
@@ -126,7 +126,7 @@ class _DashboardState extends State<Dashboard> {
       BarChartData(
         alignment: BarChartAlignment.center,
         groupsSpace: 50,
-        maxY: 10,
+        maxY: 30,
         barGroups: _getChartData(),
         borderData: FlBorderData(
             border: const Border(bottom: BorderSide(), left: BorderSide())),

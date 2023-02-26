@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -5,6 +7,7 @@ import 'package:qlcv/home_page.dart';
 import 'package:qlcv/model/db_helper.dart';
 
 import '../model/color_picker.dart';
+import '../model/task.dart';
 
 class SignInPage extends StatefulWidget {
   @override
@@ -145,7 +148,47 @@ class _SignInPageState extends State<SignInPage> {
       //     .get();
       await DBHelper.getMainUser(email: _emailController.text.trim());
 
+      //randomly create 10 user
+      // for (int i = 10; i < 30; i++) {
+      //   //random generate role [Admin,Dep,Emp]
+      //   var role = ['Admin', 'Dep', 'Emp'];
+      //   var random = new Random();
+      //   var index = random.nextInt(role.length);
+
+      //   await DBHelper.createUser(
+      //     name: 'User $i',
+      //     email: 'acc$i@${role[index].toUpperCase()}.com',
+      //     role: role[index],
+      //     dep: 'Dep$i',
+      //   );
+      // }
+      //randomly create 10 tasks
+      // await DBHelper.getEmp();
+      //  for (var i = 1; i <= 10; i++) {
+      //   var status = ['Late', 'Done', 'Pending'];
+      //   var random = new Random();
+      //   var index = random.nextInt(status.length);
+      //   List<String> emp = [];
+      //   var numbers = random.nextInt(DBHelper.employees.length);
+      //   for (var j = 0; j < numbers; j++) {
+      //     emp.add(DBHelper.employees[j].id);
+      //   }
+      //   String dep = 'Dep' + (random.nextInt(3) + 1).toString();
+      //   await DBHelper.addTask(Task(
+      //     title: 'Task $i',
+      //     description: 'Description $i',
+      //     status: status[index],
+      //     emp: emp,
+      //     dep: dep,
+      //     startDate: DateTime(2023, 2, 28 - numbers),
+      //     endDate:
+      //         DateTime(2023, 2, (status[index] != 'Pending') ? 28 - index : 28),
+      //   ));
+      // }
+      //await DBHelper.updateDep();
       //change route home
+      //await DBHelper.updateUID();
+
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => const HomePage(),
