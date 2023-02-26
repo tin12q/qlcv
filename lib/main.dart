@@ -13,7 +13,6 @@ import 'model/color_picker.dart';
 import 'model/db_helper.dart';
 //import 'model/task.dart';
 
-
 import 'route/login_page.dart';
 
 void main() async {
@@ -21,16 +20,11 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp( MaterialApp(
+  runApp(MaterialApp(
     initialRoute: '/login',
     routes: {
       '/login': (context) => SignInPage(),
-      '/home': (context) => HomePage(),
     },
-
     debugShowCheckedModeBanner: false,
-
-  )
-  );
+  ));
 }
-

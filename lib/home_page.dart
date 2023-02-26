@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:qlcv/model/emp.dart';
 import 'firebase_options.dart';
 import 'model/db_helper.dart';
 //import 'model/task.dart';
@@ -15,6 +16,7 @@ import 'route/menu.dart';
 import 'package:qlcv/model/color_picker.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
   @override
   State<HomePage> createState() => _HomePageState();
 }

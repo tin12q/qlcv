@@ -27,9 +27,9 @@ class _HomeState extends State<Home> {
             mainAxisAlignment: MainAxisAlignment.end,
 
             children: [
-              const Text(
-                'a',
-                style: TextStyle(
+              Text(
+                DBHelper.mainUser.name,
+                style: const TextStyle(
                   color: ColorPicker.fontDark,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,

@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:qlcv/home_page.dart';
+import 'package:qlcv/model/db_helper.dart';
 
 import '../model/color_picker.dart';
 
@@ -135,10 +137,18 @@ class _SignInPageState extends State<SignInPage> {
           .signInWithEmailAndPassword(
               email: _emailController.text.trim(),
               password: _passwordController.text.trim());
+      // var db = FirebaseFirestore.instance;
+      // var cr = db.collection('Emp');
+      // //select key from collection emp where email = email
+      // var doc = await cr
+      //     .where('Email', isEqualTo: _emailController.text.trim())
+      //     .get();
+      await DBHelper.getMainUser(email: _emailController.text.trim());
+
       //change route home
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => HomePage(),
+          builder: (context) => const HomePage(),
         ),
       );
     } on FirebaseAuthException catch (e) {
