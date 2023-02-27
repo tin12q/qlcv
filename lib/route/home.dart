@@ -6,6 +6,7 @@ import 'package:qlcv/model/task_box.dart';
 import 'package:qlcv/model/color_picker.dart';
 
 import '../model/db_helper.dart';
+import 'task_create.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -39,7 +40,12 @@ class _HomeState extends State<Home> {
               SafeArea(
                 child: InkWell(
                   onTap: () {
-                    print('tap');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TaskCreateRoute(),
+                      ),
+                    );
                   },
                   child: const CircleAvatar(
                     backgroundColor: ColorPicker.accent,

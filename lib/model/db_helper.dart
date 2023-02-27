@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:qlcv/model/dep.dart';
 import 'package:qlcv/model/task.dart';
 //import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,6 +13,7 @@ class DBHelper {
   static Employee mainUser =
       Employee(name: '', email: '', dep: '', role: '', id: '');
   static List<Employee> employees = [];
+  static List<Dep> deps = [];
   static var empMap = {};
   static Future<void> getEmp() async {
     try {
@@ -27,6 +29,37 @@ class DBHelper {
             role: doc['Role'],
             id: doc['Id']));
         //}
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  static Future<void> getDep() async {
+    try {
+      var qs = await FirebaseFirestore.instance
+          .collection('Department')
+          .orderBy('Name')
+          .get();
+      //TODO: get dep
+      for (var doc in qs.docs) {
+        deps.add(Dep(name: doc['Name'], emp: List<String>.from(doc['Emp'])));
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  static Future<void> updateDep() async {
+    try {
+      for (Employee e in employees) {
+        await FirebaseFirestore.instance
+            .collection('Department')
+            .where('Name', isEqualTo: e.dep)
+            .get()
+            .then((value) => value.docs[0].reference.update({
+                  'Emp': FieldValue.arrayUnion([e.id])
+                }));
       }
     } catch (e) {
       print(e);
@@ -52,9 +85,7 @@ class DBHelper {
 
   static Future<void> taskUpdate() async {
     try {
-      var db = FirebaseFirestore.instance;
-
-      CollectionReference cr = db.collection('Tasks');
+      CollectionReference cr = FirebaseFirestore.instance.collection('Tasks');
       QuerySnapshot qs = (mainUser.role == 'Admin')
           ? await cr.orderBy('Status').get()
           : await cr
@@ -162,40 +193,41 @@ class DBHelper {
   //       .get()
   //       .then((value) => value.docs[0].reference.update({'Id': uid}));
   // }
-  static updateDep() {
-    CollectionReference fbTask = FirebaseFirestore.instance.collection('Emp');
-    //add uid to firebase where email is equal to email
-    fbTask.get().then((value) => {
-          //random 1-3
 
-          for (var doc in value.docs)
-            {
-              doc.reference.update({'Dep': 'Dep${Random().nextInt(3) + 1}'})
-            }
-        });
-  }
-
-  static createUser(
+  static Future<void> createUser(
       {required String name,
       required String email,
       required String role,
-      required String dep}) {
+      required String dep}) async {
     //create firebase auth user with email and password
-    final FirebaseAuth _auth = FirebaseAuth.instance;
-    _auth.createUserWithEmailAndPassword(email: email, password: 'abcdef');
-    //get this user uid
-    final User? user = _auth.currentUser;
-    final uid = user!.uid;
+    try {
+      final FirebaseAuth _auth = FirebaseAuth.instance;
+      _auth.createUserWithEmailAndPassword(email: email, password: 'abcdef');
+      //get this user uid
+      final User? user = _auth.currentUser;
+      final uid = user!.uid;
 
-    CollectionReference fbTask = FirebaseFirestore.instance.collection('Emp');
+      CollectionReference fbTask = FirebaseFirestore.instance.collection('Emp');
 
-    fbTask.add({
-      'Name': name,
-      'Email': email,
-      'Role': role,
-      'Dep': dep,
-      'Id': uid,
-    });
+      fbTask.add({
+        'Name': name,
+        'Email': email,
+        'Role': role,
+        'Dep': dep,
+        'Id': uid,
+      });
+      //append uid to department emp list in firebase where department name is equal to dep
+      FirebaseFirestore.instance
+          .collection('Department')
+          .where('Name', isEqualTo: dep)
+          .get()
+          .then((value) => value.docs[0].reference.update({
+                'Emp': FieldValue.arrayUnion([uid])
+              }));
+    } on Exception catch (e) {
+      // TODO
+      print(e);
+    }
   }
 
   //update Uid of all Employees in firebase to match their Uid in firebase auth
@@ -228,6 +260,14 @@ class DBHelper {
     for (Task task in tasks) {
       for (var i = 0; i < task.emp.length; i++) {
         task.emp[i] = empMap[task.emp[i]].name;
+      }
+    }
+  }
+
+  static updateDepEMP() {
+    for (Dep dep in deps) {
+      for (var i = 0; i < dep.emp.length; i++) {
+        dep.emp[i] = empMap[dep.emp[i]].name;
       }
     }
   }

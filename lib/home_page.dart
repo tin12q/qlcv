@@ -36,8 +36,12 @@ class _HomePageState extends State<HomePage> {
     if (!_dataLoaded) {
       await DBHelper.getEmp();
       await DBHelper.taskUpdate();
+      await DBHelper.getDep();
       DBHelper.initMap();
-      await DBHelper.updateTaskEMP();
+      DBHelper.updateTaskEMP();
+      //await DBHelper.updateDep();
+      DBHelper.updateDepEMP();
+
       setState(() {
         _dataLoaded = true;
       });
