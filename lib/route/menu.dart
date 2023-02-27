@@ -40,6 +40,7 @@ class _MenuState extends State<Menu> {
 
     // Navigate to the login page
     DBHelper.reset();
+
     await FirebaseAuth.instance.signOut();
     Navigator.pushNamedAndRemoveUntil(
       context,
