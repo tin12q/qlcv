@@ -279,6 +279,10 @@ class DBHelper {
   }
 
   static reset() {
+    employees.clear();
+    deps.clear();
+    empMap.clear();
+    depMap.clear();
     tasks.clear();
   }
 }

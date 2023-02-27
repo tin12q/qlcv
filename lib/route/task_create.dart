@@ -17,10 +17,14 @@ class TaskCreateRoute extends StatefulWidget {
 class _TaskCreateRouteState extends State<TaskCreateRoute> {
   //text controller
   TextEditingController dateinput = TextEditingController();
+  TextEditingController titleinput = TextEditingController();
+  TextEditingController descinput = TextEditingController();
+  DateTime end = DateTime.now();
   String depName = "";
   @override
   void initState() {
-    dateinput.text = ""; //set the initial value of text field
+    dateinput.text = "";
+    depName = ""; //set the initial value of text field
     super.initState();
   }
 
@@ -52,6 +56,7 @@ class _TaskCreateRouteState extends State<TaskCreateRoute> {
                   const SizedBox(width: 20),
                   Expanded(
                     child: TextField(
+                      controller: titleinput,
                       decoration: const InputDecoration(
                         hintText: 'Enter title',
                       ),
@@ -77,7 +82,6 @@ class _TaskCreateRouteState extends State<TaskCreateRoute> {
                           )
                           .toList(),
                       onChanged: (value) {
-                        //TODO: set the value of the department
                         setState(() {
                           depName = value!.name;
                         });
@@ -102,7 +106,7 @@ class _TaskCreateRouteState extends State<TaskCreateRoute> {
                   DateTime? pickedDate = await showDatePicker(
                       builder: (context, child) => Theme(
                             data: ThemeData.light().copyWith(
-                              colorScheme: ColorScheme.light(
+                              colorScheme: const ColorScheme.light(
                                 primary: ColorPicker.accent,
                               ),
                             ),
@@ -118,11 +122,12 @@ class _TaskCreateRouteState extends State<TaskCreateRoute> {
                     //print(pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
                     String formattedDate =
                         DateFormat('yyyy-MM-dd').format(pickedDate);
+
                     //print(formattedDate);
 
                     setState(() {
-                      dateinput.text =
-                          formattedDate; //set output date to TextField value.
+                      dateinput.text = formattedDate;
+                      end = pickedDate;
                     });
                   } else {
                     print("Date is not selected");
@@ -132,6 +137,7 @@ class _TaskCreateRouteState extends State<TaskCreateRoute> {
               const SizedBox(height: 20),
               Expanded(
                   child: TextField(
+                controller: descinput,
                 decoration: const InputDecoration(
                   hintText: 'Enter description',
                 ),
@@ -143,21 +149,22 @@ class _TaskCreateRouteState extends State<TaskCreateRoute> {
                 children: [
                   ElevatedButton(
                       onPressed: _back,
-                      child: Text('Cancel'),
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
                             ColorPicker.accent),
-                      )),
+                      ),
+                      child: const Text('Cancel')),
                   const SizedBox(width: 20),
                   ElevatedButton(
-                      onPressed: null,
-                      child: Text('Create'),
+                      onPressed: _createTask,
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
                             ColorPicker.accent),
-                      )),
+                      ),
+                      child: const Text('Create')),
                 ],
               ),
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -170,8 +177,38 @@ class _TaskCreateRouteState extends State<TaskCreateRoute> {
   }
 
   void _createTask() async {
-    try {} catch (e) {
-      print(e);
+    //TODO: create Task
+    try {
+      if (titleinput.text == "" ||
+          depName == "" ||
+          dateinput.text == "" ||
+          descinput.text == "") {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please fill all the fields',
+                style: TextStyle(color: ColorPicker.primary)),
+            backgroundColor: ColorPicker.accent,
+            duration: Duration(seconds: 2),
+          ),
+        );
+        throw Exception("Please fill all the fields");
+      }
+      Task task = Task(
+          title: titleinput.text,
+          description: descinput.text,
+          status: 'Pending',
+          startDate: DateTime.now(),
+          endDate: end,
+          dep: depName,
+          emp: []);
+      await DBHelper.addTask(task);
+      DBHelper.tasks.add(task);
+      Navigator.pop(context);
+    } on Exception catch (e) {
+      if (e == Exception("Please fill all the fields")) {
+        //show snack bar
+        print(e);
+      }
     }
   }
 }
