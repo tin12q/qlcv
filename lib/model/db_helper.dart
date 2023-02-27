@@ -15,6 +15,7 @@ class DBHelper {
   static List<Employee> employees = [];
   static List<Dep> deps = [];
   static var empMap = {};
+  static var depMap = {};
   static Future<void> getEmp() async {
     try {
       var db = FirebaseFirestore.instance;
@@ -273,7 +274,8 @@ class DBHelper {
   }
 
   static void initMap() {
-    empMap = Map.fromIterable(employees, key: (e) => e.id, value: (e) => e);
+    empMap = {for (var e in employees) e.id: e};
+    depMap = {for (var d in deps) d.name: d.emp};
   }
 
   static reset() {
