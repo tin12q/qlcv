@@ -59,3 +59,4 @@ macos/Runner.xcodeproj/project.pbxproj
 ios/Runner.xcodeproj/project.pbxproj
 android/build.gradle
 .vscode/launch.json
+.firebaserc

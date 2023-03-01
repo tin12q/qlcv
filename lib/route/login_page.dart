@@ -146,7 +146,7 @@ class _SignInPageState extends State<SignInPage> {
       // var doc = await cr
       //     .where('Email', isEqualTo: _emailController.text.trim())
       //     .get();
-      await DBHelper.getMainUser(email: _emailController.text.trim());
+      await DBHelper.getMainUser(id: userCredential.user!.uid);
 
       //randomly create 10 user
       // for (int i = 10; i < 30; i++) {
@@ -190,12 +190,6 @@ class _SignInPageState extends State<SignInPage> {
       //await DBHelper.updateUID();
 
       //updateDep
-
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const HomePage(),
-        ),
-      );
     } on FirebaseAuthException catch (e) {
       String errorMessage = 'An error occurred, please check your credentials';
       if (e.code == 'user-not-found') {
@@ -205,16 +199,21 @@ class _SignInPageState extends State<SignInPage> {
       }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content:
-              Text(errorMessage, style: TextStyle(color: ColorPicker.primary)),
+          content: Text(errorMessage,
+              style: const TextStyle(color: ColorPicker.primary)),
           backgroundColor: ColorPicker.accent,
-          duration: Duration(seconds: 5),
+          duration: const Duration(seconds: 5),
         ),
       );
     } finally {
       setState(() {
         _isLoading = false;
       });
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        '/home',
+        (route) => false,
+      );
     }
   }
 }

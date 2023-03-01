@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:qlcv/model/db_helper.dart';
@@ -34,7 +36,6 @@ class _MenuState extends State<Menu> {
   }
 
   void logout(BuildContext context) async {
-    // TODO: Implement logout functionality
     // For example, clear the user's session or token
     // And navigate to the login page
 

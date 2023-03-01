@@ -1,21 +1,10 @@
-import 'dart:io' show Platform;
-import 'dart:math';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:qlcv/model/color_picker.dart';
 import 'firebase_options.dart';
-import 'package:provider/provider.dart';
 import 'home_page.dart';
-import 'model/color_picker.dart';
-import 'model/db_helper.dart';
 //import 'model/task.dart';
 
-import 'model/task.dart';
 import 'route/login_page.dart';
 
 void main() async {
@@ -68,6 +57,7 @@ void main() async {
     initialRoute: '/login',
     routes: {
       '/login': (context) => SignInPage(),
+      '/home': (context) => const HomePage(),
     },
     debugShowCheckedModeBanner: false,
   ));

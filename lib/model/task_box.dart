@@ -60,7 +60,7 @@ class TaskCard extends StatelessWidget {
                     )),
                 const SizedBox(height: 2),
                 Container(
-                    height: 30,
+                    height: 25,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: ColorPicker.primary,

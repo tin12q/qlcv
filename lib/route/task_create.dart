@@ -28,7 +28,7 @@ class _TaskCreateRouteState extends State<TaskCreateRoute> {
     super.initState();
   }
 
-  //TODO: create controller for each text field
+
   @override
   Widget build(BuildContext context) {
     // TODO: page to create a new task
@@ -177,7 +177,6 @@ class _TaskCreateRouteState extends State<TaskCreateRoute> {
   }
 
   void _createTask() async {
-    //TODO: create Task
     try {
       if (titleinput.text == "" ||
           depName == "" ||

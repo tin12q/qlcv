@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:qlcv/model/dep.dart';
 import 'package:qlcv/model/task.dart';
@@ -42,7 +40,7 @@ class DBHelper {
           .collection('Department')
           .orderBy('Name')
           .get();
-      //TODO: get dep
+
       for (var doc in qs.docs) {
         deps.add(Dep(name: doc['Name'], emp: List<String>.from(doc['Emp'])));
       }
@@ -67,14 +65,14 @@ class DBHelper {
     }
   }
 
-  static Future<void> getMainUser({required String email}) async {
+  static Future<void> getMainUser({required String id}) async {
     try {
       var db = FirebaseFirestore.instance;
       CollectionReference cr = db.collection('Emp');
-      var doc = await cr.where('Email', isEqualTo: email).get();
+      var doc = await cr.where('Id', isEqualTo: id).get();
       mainUser = Employee(
           name: doc.docs[0]['Name'],
-          email: email,
+          email: doc.docs[0]['Email'],
           dep: doc.docs[0]['Dep'],
           role: doc.docs[0]['Role'],
           id: doc.docs[0]['Id']);
@@ -178,7 +176,6 @@ class DBHelper {
         'Emp': task.emp,
       });
     } on Exception catch (e) {
-      // TODO:
       print(e);
     }
   }
@@ -226,7 +223,6 @@ class DBHelper {
                 'Emp': FieldValue.arrayUnion([uid])
               }));
     } on Exception catch (e) {
-      // TODO
       print(e);
     }
   }
@@ -251,7 +247,6 @@ class DBHelper {
               }
           });
     } on Exception catch (e) {
-      // TODO
       print(e);
     }
   }
