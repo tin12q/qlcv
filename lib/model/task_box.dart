@@ -52,15 +52,16 @@ class TaskCard extends StatelessWidget {
           trailing: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
+
               children: [
                 Text(task.status,
                     style: const TextStyle(
                       color: ColorPicker.primary,
                       fontSize: 20,
                     )),
-                const SizedBox(height: 2),
+                const SizedBox(height: 1),
                 Container(
-                    height: 25,
+                    height: 22,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: ColorPicker.primary,
