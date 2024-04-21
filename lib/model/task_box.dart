@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:qlcv/model/db_helper.dart';
 import 'package:qlcv/model/task_page.dart';
+import '../home_page.dart';
+import '../route/home.dart';
 import 'color_picker.dart';
 import 'task.dart';
 
@@ -7,7 +10,12 @@ class TaskCard extends StatelessWidget {
   final Task task;
 
   const TaskCard({required this.task});
+  Future<void> deleteTask(Task task) async {
+    await DBHelper.deleteTask(task);
+    DBHelper.tasks.clear();
+    await DBHelper.taskUpdate();
 
+  }
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -36,15 +44,20 @@ class TaskCard extends StatelessWidget {
                       : task.description,
                   style: const TextStyle(
                     color: ColorPicker.primary,
-                    fontSize: 20,
+                    fontSize: 17,
                   )),
               const SizedBox(height: 10),
+              Text(task.status,
+                  style: const TextStyle(
+                    color: ColorPicker.primary,
+                    fontSize: 25,
+                  )),
               Text(task.endDateString,
                   style: const TextStyle(
                     color: ColorPicker.primary,
                     //bold
                     //fontWeight: FontWeight.bold,
-                    fontSize: 25,
+                    fontSize: 20,
                   )),
               //const SizedBox(height: 10),
             ],
@@ -53,12 +66,7 @@ class TaskCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(task.status,
-                    style: const TextStyle(
-                      color: ColorPicker.primary,
-                      fontSize: 20,
-                    )),
-                const SizedBox(height: 2),
+                const SizedBox(height: 0),
                 Container(
                     height: 25,
                     child: ElevatedButton(
@@ -78,7 +86,76 @@ class TaskCard extends StatelessWidget {
                                       task: task,
                                     )));
                       },
-                    )),
+                    ),
+                ),
+                const SizedBox(height: 6),
+                DBHelper.mainUser.role == 'Admin' ? Container(
+                    height: 25,
+                    child:   ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ColorPicker.dark,
+                        foregroundColor: ColorPicker.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                      child: const Icon(Icons.delete_outline, color: ColorPicker.primary,),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Warning'),
+                              content: const Text('Are you sure you want to delete this task?'),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text('No'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop(); // Closes the dialog
+                                  },
+                                ),
+                                TextButton(
+                                  child: const Text('Confirm'),
+                                  onPressed: () {
+                                    deleteTask(task); // Calls the deleteTask function
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => HomePage()),
+                                          (Route<dynamic> route) => false,
+                                    );
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    )
+                ) : Container(
+                    height: 25,
+                    child:   ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ColorPicker.dark,
+                        foregroundColor: ColorPicker.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                      child: const Text('Delete'),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Warning'),
+                              content: const Text('You are not allowed to delete tasks'),
+
+                            );
+                          },
+                        );
+                      },
+                    )
+                )
               ]),
           onTap: () {
             /*Navigator.push(
@@ -98,6 +175,8 @@ class TaskCard extends StatelessWidget {
       ),
     );
   }
+
+
 }
 
 class TaskBoxList extends StatelessWidget {
@@ -111,16 +190,23 @@ class TaskBoxList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.separated(
       itemCount: tasks.length,
-      itemBuilder: (context, index) => Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const SizedBox(width: 10),
-          Expanded(
-            child: TaskCard(task: tasks[index]),
-          ),
-          const SizedBox(width: 10)
-        ],
-      ),
+      itemBuilder: (context, index) {
+        if (index >= 0 && index < tasks.length) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(width: 10),
+              Expanded(
+                child: TaskCard(task: tasks[index]),
+              ),
+              const SizedBox(width: 10)
+            ],
+          );
+        } else {
+          print('Index $index is out of range for list of length ${tasks.length}');
+          return Row(); // Return an empty Row or some other widget
+        }
+      },
       separatorBuilder: (BuildContext context, int index) {
         return const SizedBox(height: 15);
       },

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:qlcv/model/color_picker.dart';
 import 'package:qlcv/model/dep.dart';
 
+import '../home_page.dart';
 import '../model/db_helper.dart';
 import 'package:intl/intl.dart';
 import 'package:qlcv/model/task.dart';
@@ -192,7 +193,8 @@ class _TaskCreateRouteState extends State<TaskCreateRoute> {
         );
         throw Exception("Please fill all the fields");
       }
-      Task task = Task(
+
+      Task task = new Task(
           title: titleinput.text,
           description: descinput.text,
           status: 'Pending',
@@ -203,11 +205,13 @@ class _TaskCreateRouteState extends State<TaskCreateRoute> {
       await DBHelper.addTask(task);
       DBHelper.tasks.add(task);
       Navigator.pop(context);
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+            (Route<dynamic> route) => false,
+      );
     } on Exception catch (e) {
-      if (e == Exception("Please fill all the fields")) {
-        //show snack bar
-        print(e);
-      }
+      print(e);
     }
   }
 }

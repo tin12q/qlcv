@@ -1,8 +1,6 @@
 import 'dart:math';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:qlcv/home_page.dart';
 import 'package:qlcv/model/db_helper.dart';
 
@@ -136,67 +134,16 @@ class _SignInPageState extends State<SignInPage> {
     });
 
     try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-              email: _emailController.text.trim(),
-              password: _passwordController.text.trim());
-      // var db = FirebaseFirestore.instance;
-      // var cr = db.collection('Emp');
-      // //select key from collection emp where email = email
-      // var doc = await cr
-      //     .where('Email', isEqualTo: _emailController.text.trim())
-      //     .get();
-      await DBHelper.getMainUser(id: userCredential.user!.uid);
 
-      //randomly create 10 user
-      // for (int i = 10; i < 30; i++) {
-      //   //random generate role [Admin,Dep,Emp]
-      //   var role = ['Admin', 'Dep', 'Emp'];
-      //   var random = new Random();
-      //   var index = random.nextInt(role.length);
+      await DBHelper.logIn(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
 
-      //   await DBHelper.createUser(
-      //     name: 'User $i',
-      //     email: 'acc$i@${role[index].toUpperCase()}.com',
-      //     role: role[index],
-      //     dep: 'Dep$i',
-      //   );
-      // }
-      //randomly create 10 tasks
-      // await DBHelper.getEmp();
-      //  for (var i = 1; i <= 10; i++) {
-      //   var status = ['Late', 'Done', 'Pending'];
-      //   var random = new Random();
-      //   var index = random.nextInt(status.length);
-      //   List<String> emp = [];
-      //   var numbers = random.nextInt(DBHelper.employees.length);
-      //   for (var j = 0; j < numbers; j++) {
-      //     emp.add(DBHelper.employees[j].id);
-      //   }
-      //   String dep = 'Dep' + (random.nextInt(3) + 1).toString();
-      //   await DBHelper.addTask(Task(
-      //     title: 'Task $i',
-      //     description: 'Description $i',
-      //     status: status[index],
-      //     emp: emp,
-      //     dep: dep,
-      //     startDate: DateTime(2023, 2, 28 - numbers),
-      //     endDate:
-      //         DateTime(2023, 2, (status[index] != 'Pending') ? 28 - index : 28),
-      //   ));
-      // }
-      //await DBHelper.updateDep();
-      //change route home
-      //await DBHelper.updateUID();
-
-      //updateDep
-    } on FirebaseAuthException catch (e) {
+    } on Exception catch (e) {
+      // * Create User to
       String errorMessage = 'An error occurred, please check your credentials';
-      if (e.code == 'user-not-found') {
-        errorMessage = 'No user found for that email';
-      } else if (e.code == 'wrong-password') {
-        errorMessage = 'Wrong password provided for that user';
-      }
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(errorMessage,

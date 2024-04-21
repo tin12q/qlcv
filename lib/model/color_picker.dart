@@ -10,5 +10,4 @@ class ColorPicker {
   static const second = Color(0xfff5b834);
   static const third = Color(0xff4c5957);
   static const dark = Color (0xff88482c);
-
 }

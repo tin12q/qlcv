@@ -1,48 +1,72 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:io';
+
+import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:qlcv/model/dep.dart';
 import 'package:qlcv/model/task.dart';
-//import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'emp.dart';
-//import '../firebase_options.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class DBHelper {
+  static var client = http.Client();
   static List<Task> tasks = [];
+  static String token = '';
   static Employee mainUser =
-      Employee(name: '', email: '', dep: '', role: '', id: '');
+  Employee(name: '', email: '', dep: '', role: '', id: '');
+
   static List<Employee> employees = [];
   static List<Dep> deps = [];
   static var empMap = {};
   static var depMap = {};
   static Future<void> getEmp() async {
     try {
-      var db = FirebaseFirestore.instance;
-      CollectionReference cr = db.collection('Emp');
-      QuerySnapshot qs = await cr.get();
-      for (var doc in qs.docs) {
-        //if (doc['Role'] == 'Emp') {
-        employees.add(Employee(
-            name: doc['Name'],
-            email: doc['Email'],
-            dep: doc['Dep'],
-            role: doc['Role'],
-            id: doc['Id']));
-        //}
+      var url = Uri.parse('http://10.0.2.2:1337/api/users/getAll');
+      var response = await http.get(
+        url,
+        headers: <String, String>{
+
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if(response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        for (var emp in data) {
+          employees.add(Employee(
+              name: emp['name'],
+              email: emp['email'],
+              dep: emp['team'],
+              role: emp['role'],
+              id: emp['_id']));
+        }
+      } else {
+        throw Exception('Failed to get employees.');
       }
     } catch (e) {
       print(e);
     }
+
   }
 
   static Future<void> getDep() async {
+    deps.clear();
     try {
-      var qs = await FirebaseFirestore.instance
-          .collection('Department')
-          .orderBy('Name')
-          .get();
-
-      for (var doc in qs.docs) {
-        deps.add(Dep(name: doc['Name'], emp: List<String>.from(doc['Emp'])));
+      var url = Uri.parse('http://10.0.2.2:1337/api/teams/');
+      var response = await http.get(
+        url,
+        headers: <String, String>{
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if(response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        for (var dep in data) {
+          List<String> members = List<String>.from(dep['members']);
+          //if dep['name'] is already in deps, continue
+          deps.add(Dep(name: dep['name'], emp: members));
+        }
+      } else {
+        throw Exception('Failed to get departments.');
       }
     } catch (e) {
       print(e);
@@ -50,132 +74,183 @@ class DBHelper {
   }
 
   static Future<void> updateDep() async {
-    try {
-      for (Employee e in employees) {
-        await FirebaseFirestore.instance
-            .collection('Department')
-            .where('Name', isEqualTo: e.dep)
-            .get()
-            .then((value) => value.docs[0].reference.update({
-                  'Emp': FieldValue.arrayUnion([e.id])
-                }));
+    try{
+      var url = Uri.parse('http://10.0.2.2:1337/api/teams/');
+      var response = await http.get(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if(response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        for (var dep in data) {
+          depMap[dep['name']] = dep['members'
+              ''];
+        }
+      } else {
+        throw Exception('Failed to update departments.');
       }
     } catch (e) {
-      print(e);
+        print(e);
     }
   }
 
   static Future<void> getMainUser({required String id}) async {
     try {
-      var db = FirebaseFirestore.instance;
-      CollectionReference cr = db.collection('Emp');
-      var doc = await cr.where('Id', isEqualTo: id).get();
-      mainUser = Employee(
-          name: doc.docs[0]['Name'],
-          email: doc.docs[0]['Email'],
-          dep: doc.docs[0]['Dep'],
-          role: doc.docs[0]['Role'],
-          id: doc.docs[0]['Id']);
-    } catch (e) {
-      // ignore: avoid_print
-      print(e);
-    }
-  }
-
-  static Future<void> taskUpdate() async {
-    try {
-      CollectionReference cr = FirebaseFirestore.instance.collection('Tasks');
-      QuerySnapshot qs = (mainUser.role == 'Admin')
-          ? await cr.orderBy('Status').get()
-          : await cr
-              .orderBy('Status')
-              .where('Dep', isEqualTo: mainUser.dep)
-              .get();
-      for (var doc in qs.docs) {
-        tasks.add(Task(
-            title: doc['Title'],
-            description: doc['Desc'],
-            status: doc['Status'],
-            dep: doc['Dep'],
-            startDate: (doc['Start'] as Timestamp).toDate(),
-            endDate: (doc['End'] as Timestamp).toDate(),
-            emp: List<String>.from(doc['Emp'])));
+      var url = Uri.parse('http://10.0.2.2:1337/api/users/$id');
+      var response = await http.get(
+        url,
+        headers: <String, String>{
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        mainUser = Employee(
+            name: data['name'],
+            email: data['email'],
+            dep: data['team'],
+            role: data['role'],
+            id: data['_id'],
+            ava: data['ava']);
+      } else {
+        throw Exception('Failed to get main user.');
       }
     } catch (e) {
-      // ignore: avoid_print
+      print(e);
+    }
+  }
+  static Future<void> deleteTask(Task task) async {
+    try{
+      var url = Uri.parse('http://10.0.2.2:1337/api/tasks/${task.id}');
+      var response = await http.delete(
+        url,
+        headers: <String, String>{
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if(response.statusCode == 200) {
+        tasks.clear();
+        print('Task deleted');
+      } else {
+        throw Exception('Failed to delete task.');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+  static Future<void> taskUpdate() async {
+    tasks.clear();
+    try {
+      var url = Uri.parse('http://10.0.2.2:1337/api/tasks/getAll');
+      var response = await http.get(
+        url,
+        headers: <String, String>{
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if(response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        for (var task in data) {
+          List<String> members = (task['emp'] as List<dynamic>).map((item) => item.toString()).toList();
+          if(mainUser.role == 'Admin') {
+            tasks.add(Task(
+                id: task['_id'],
+                title: task['title'],
+                description: task['description'],
+                status: task['status'],
+                dep: task['team'],
+                startDate: DateTime.parse(task['startDate']),
+                endDate: DateTime.parse(task['endDate']),
+                emp: members));
+          } else {
+            if(members.contains(mainUser.id)) {
+              tasks.add(Task(
+                  id: task['_id'],
+                  title: task['title'],
+                  description: task['description'],
+                  status: task['status'],
+                  dep: task['team'],
+                  startDate: DateTime.parse(task['startDate']),
+                  endDate: DateTime.parse(task['endDate']),
+                  emp: members));
+            }
+          }
+        }
+
+      } else {
+        throw Exception('Failed to update tasks.');
+      }
+
+    } catch (e) {
+      print(e);
+    }
+  }
+  static Future<void> logIn({required String email, required String password}) async {
+    try{
+      var url = Uri.parse('http://10.0.2.2:1337/api/auth/login');
+      var response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: <String, String>{
+          'email': email,
+          'password': password,
+        },
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        token = response.headers['authorization']!.split(" ")[1];
+        await getMainUser(id: data['id']);
+      } else {
+        throw Exception('Failed to login.');
+      }
+    } catch (e) {
       print(e);
     }
   }
 
-  // static Future<void> taskUpdate() async {
-  //   switch (mainUser.role) {
-  //     case 'Admin':
-  //       getTask();
-  //       break;
-  //     case 'Dep':
-  //       getTaskMan(dep: mainUser.dep);
-  //       break;
-  //     case 'Employee':
-  //       getTaskMan(dep: mainUser.dep);
-  //       break;
-  //   }
-  //   //await cr.add({'title': 'test', 'description': 'test', 'status': 'test', 'startDate': 'test', 'endDate': 'test'});
-  // }
 
-  // static Future<void> getTask() async {
-  //   try {
-  //     var db = FirebaseFirestore.instance;
-  //     CollectionReference cr = db.collection('tasks');
-  //     QuerySnapshot qs = await cr.get();
-  //     for (var doc in qs.docs) {
-  //       tasks.add(Task(
-  //           title: doc['Title'],
-  //           description: doc['Description'],
-  //           status: doc['Status'],
-  //           dep: doc['Department'],
-  //           startDate: (doc['Start Date'] as Timestamp).toDate(),
-  //           endDate: (doc['Due Date'] as Timestamp).toDate()));
-  //     }
-  //   } catch (e) {
-  //     // ignore: avoid_print
-  //     print(e);
-  //   }
-  // }
 
-  // static Future<void> getTaskMan({required String dep}) async {
-  //   try {
-  //     var db = FirebaseFirestore.instance;
-  //     CollectionReference cr = db.collection('tasks');
-  //     QuerySnapshot qs = await cr.where('Department', isEqualTo: dep).get();
-  //     for (var doc in qs.docs) {
-  //       tasks.add(Task(
-  //           title: doc['Title'],
-  //           description: doc['Description'],
-  //           status: doc['Status'],
-  //           dep: doc['Department'],
-  //           startDate: (doc['Start Date'] as Timestamp).toDate(),
-  //           endDate: (doc['Due Date'] as Timestamp).toDate()));
-  //     }
-  //   } catch (e) {
-  //     // ignore: avoid_print
-  //     print(e);
-  //   }
-  // }
 
-  static Future<void> addTask(Task task) async {
+  static Future<void> addUser() async {
     try {
-      CollectionReference fbTask =
-          FirebaseFirestore.instance.collection('Tasks');
-      fbTask.add({
-        'Title': task.title,
-        'Desc': task.description,
-        'Status': task.status,
-        'Start': Timestamp.fromDate(task.startDate),
-        'Dep': task.dep,
-        'End': Timestamp.fromDate(task.endDate),
-        'Emp': task.emp,
-      });
-    } on Exception catch (e) {
+      final String res = await rootBundle.loadString('assets/users.json');
+      final data = json.decode(res);
+
+      if (data is List) {
+        for (var item in data) {
+          print(item);
+          var url = Uri.parse('http://10.0.2.2:1337/api/users/');
+          var response = await http.post(
+            url,
+            headers: <String, String>{
+              'Authorization': 'Bearer $token',
+            },
+            body: <String, String>{
+              'name': item['name'],
+              'email': item['email'],
+              'team': item['team'],
+              'role': item['role'],
+
+            }
+          );
+
+          if (response.statusCode == 201) {
+            print('User added');
+          } else {
+            print('Failed to add user. Status code: ${response.statusCode}');
+            print(response.body);
+          }
+        }
+      } else {
+        print("JSON data is not a list");
+      }
+    } catch (e) {
       print(e);
     }
   }
@@ -192,36 +267,47 @@ class DBHelper {
   //       .then((value) => value.docs[0].reference.update({'Id': uid}));
   // }
 
+
+  static Future<void> addTask(Task task) async {
+    try{
+      var url = Uri.parse('http://10.0.2.2:1337/api/tasks/');
+      print('Adding task');
+      var response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer $token',
+        },
+        body: <String, String>{
+          'title': task.title,
+          'description': task.description,
+          'status': task.status,
+          'team': task.dep,
+          'startDate': task.startDate.toString(),
+          'endDate': task.endDate.toString(),
+          'emp': task.emp.join(','), // Convert List<String> to String
+          'mainUser': mainUser.id,
+        },
+      );
+      print(response.statusCode);
+      if(response.statusCode == 201) {
+        print('Task added');
+      } else {
+        throw Exception('Failed to add task.');
+      }
+
+    } catch (e) {
+      print(e);
+    }
+  }
   static Future<void> createUser(
       {required String name,
-      required String email,
-      required String role,
-      required String dep}) async {
+        required String email,
+        required String role,
+        required String dep}) async {
     //create firebase auth user with email and password
     try {
-      final FirebaseAuth _auth = FirebaseAuth.instance;
-      _auth.createUserWithEmailAndPassword(email: email, password: 'abcdef');
-      //get this user uid
-      final User? user = _auth.currentUser;
-      final uid = user!.uid;
 
-      CollectionReference fbTask = FirebaseFirestore.instance.collection('Emp');
-
-      fbTask.add({
-        'Name': name,
-        'Email': email,
-        'Role': role,
-        'Dep': dep,
-        'Id': uid,
-      });
-      //append uid to department emp list in firebase where department name is equal to dep
-      FirebaseFirestore.instance
-          .collection('Department')
-          .where('Name', isEqualTo: dep)
-          .get()
-          .then((value) => value.docs[0].reference.update({
-                'Emp': FieldValue.arrayUnion([uid])
-              }));
     } on Exception catch (e) {
       print(e);
     }
@@ -229,24 +315,35 @@ class DBHelper {
 
   //update Uid of all Employees in firebase to match their Uid in firebase auth
   static updateUID() async {
+
+  }
+
+  static Future<void> updateTask(Task task) async {
     try {
-      CollectionReference fbTask = FirebaseFirestore.instance.collection('Emp');
-      fbTask.get().then((value) => {
-            for (var doc in value.docs)
-              {
-                FirebaseAuth.instance.signOut(),
-                //delay to allow signout
-                Future.delayed(const Duration(seconds: 2)),
-                FirebaseAuth.instance.signInWithEmailAndPassword(
-                  email: doc['Email'],
-                  password: 'abcdef',
-                ),
-                Future.delayed(const Duration(seconds: 2)),
-                doc.reference
-                    .update({'Id': FirebaseAuth.instance.currentUser!.uid})
-              }
-          });
-    } on Exception catch (e) {
+      var url = Uri.parse('http://10.0.2.2:1337/api/tasks/${task.id}');
+      var response = await http.put(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer $token',
+        },
+        body: <String, String>{
+          'title': task.title,
+          'description': task.description,
+          'status': task.status,
+          'team': task.dep,
+          'startDate': task.startDate.toString(),
+          'endDate': task.endDate.toString(),
+        },
+      );
+
+      if(response.statusCode == 200) {
+        tasks.clear();
+        print('Task updated');
+      } else {
+        throw Exception('Failed to update task.');
+      }
+    } catch (e) {
       print(e);
     }
   }
@@ -255,7 +352,11 @@ class DBHelper {
   static updateTaskEMP() {
     for (Task task in tasks) {
       for (var i = 0; i < task.emp.length; i++) {
-        task.emp[i] = empMap[task.emp[i]].name;
+        if (empMap[task.emp[i]] != null) {
+          task.emp[i] = empMap[task.emp[i]].name;
+        } else {
+          // print('No employee found for id ${task.emp[i]}');
+        }
       }
     }
   }

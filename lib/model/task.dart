@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 
 class Task {
+  String _id = '';
   String _title = '';
   String _description = '';
   String _status = '';
@@ -11,6 +12,7 @@ class Task {
   DateTime _endDate = DateTime.now();
   List<String> _emp = [];
 
+  get id => _id;
   get title => _title;
   get description => _description;
   get status => _status;
@@ -30,6 +32,7 @@ class Task {
     return empWidget;
   }
 
+  set id(id) => _id = id;
   set title(title) => _title = title;
   set description(description) => _description = description;
   set status(status) => _status = status;
@@ -39,13 +42,15 @@ class Task {
   set emp(emp) => _emp = emp;
 
   Task(
-      {required String title,
+      { String? id,
+        required String title,
       required String description,
       required String status,
       required String dep,
       required DateTime startDate,
       required DateTime endDate,
       required List<String> emp}) {
+    if(id != null) _id = id;
     _title = title;
     _description = description;
     _status = status;
@@ -57,6 +62,6 @@ class Task {
 
   @override
   String toString() {
-    return 'task{_title: $_title, _description: $_description, _status: $_status, _startDate: $_startDate, _endDate: $_endDate}';
+    return 'task{_title: $_title, _description: $_description, _status: $_status, _startDate: $_startDate, _endDate: $_endDate}, _emp: $_emp}';
   }
 }

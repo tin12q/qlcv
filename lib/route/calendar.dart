@@ -32,7 +32,8 @@ class _CalendarState extends State<Calendar> {
                   ),
                   child: SizedBox(
                       width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height * 0.4,
+                      height: MediaQuery.of(context).size.height * 0.5,
+                      child:SingleChildScrollView(
                       child: CleanCalendar(
                         currentDateProperties: DatesProperties(
                           datesDecoration: DatesDecoration(
@@ -95,7 +96,7 @@ class _CalendarState extends State<Calendar> {
                             datesBorderRadius: 1000,
                           ),
                         ),
-                      ))),
+                      )))),
             )),
             const SizedBox(width: 10)
           ],
