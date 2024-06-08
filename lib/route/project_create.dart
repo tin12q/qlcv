@@ -4,20 +4,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qlcv/model/color_picker.dart';
 import 'package:qlcv/model/dep.dart';
+import 'package:qlcv/route/projects.dart';
 
 import '../home_page.dart';
 import '../model/db_helper.dart';
 import 'package:intl/intl.dart';
 import 'package:qlcv/model/task.dart';
 
-import 'home.dart';
+import '../model/project.dart';
 
-class TaskCreateRoute extends StatefulWidget {
+class ProjectCreateRoute extends StatefulWidget {
   @override
-  State<TaskCreateRoute> createState() => _TaskCreateRouteState();
+  State<ProjectCreateRoute> createState() => _ProjectCreateRouteState();
 }
 
-class _TaskCreateRouteState extends State<TaskCreateRoute> {
+class _ProjectCreateRouteState extends State<ProjectCreateRoute> {
   //text controller
   TextEditingController dateinput = TextEditingController();
   TextEditingController titleinput = TextEditingController();
@@ -37,7 +38,7 @@ class _TaskCreateRouteState extends State<TaskCreateRoute> {
     // TODO: page to create a new task
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Task'),
+        title: const Text('Create Project'),
         backgroundColor: ColorPicker.accent,
       ),
       body: SafeArea(
@@ -79,10 +80,10 @@ class _TaskCreateRouteState extends State<TaskCreateRoute> {
                       items: DBHelper.deps
                           .map(
                             (dep) => DropdownMenuItem<Dep>(
-                              value: dep,
-                              child: Text(dep.name),
-                            ),
-                          )
+                          value: dep,
+                          child: Text(dep.name),
+                        ),
+                      )
                           .toList(),
                       onChanged: (value) {
                         setState(() {
@@ -104,17 +105,17 @@ class _TaskCreateRouteState extends State<TaskCreateRoute> {
                   labelText: "End Date", //label text of field
                 ),
                 readOnly:
-                    true, //set it true, so that user will not able to edit text
+                true, //set it true, so that user will not able to edit text
                 onTap: () async {
                   DateTime? pickedDate = await showDatePicker(
                       builder: (context, child) => Theme(
-                            data: ThemeData.light().copyWith(
-                              colorScheme: const ColorScheme.light(
-                                primary: ColorPicker.accent,
-                              ),
-                            ),
-                            child: child!,
+                        data: ThemeData.light().copyWith(
+                          colorScheme: const ColorScheme.light(
+                            primary: ColorPicker.accent,
                           ),
+                        ),
+                        child: child!,
+                      ),
                       context: context,
                       initialDate: DateTime.now(),
                       firstDate: DateTime(
@@ -124,7 +125,7 @@ class _TaskCreateRouteState extends State<TaskCreateRoute> {
                   if (pickedDate != null) {
                     //print(pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
                     String formattedDate =
-                        DateFormat('yyyy-MM-dd').format(pickedDate);
+                    DateFormat('yyyy-MM-dd').format(pickedDate);
 
                     //print(formattedDate);
 
@@ -140,12 +141,12 @@ class _TaskCreateRouteState extends State<TaskCreateRoute> {
               const SizedBox(height: 20),
               Expanded(
                   child: TextField(
-                controller: descinput,
-                decoration: const InputDecoration(
-                  hintText: 'Enter description',
-                ),
-                maxLines: null,
-              )),
+                    controller: descinput,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter description',
+                    ),
+                    maxLines: null,
+                  )),
               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -159,7 +160,7 @@ class _TaskCreateRouteState extends State<TaskCreateRoute> {
                       child: const Text('Cancel')),
                   const SizedBox(width: 20),
                   ElevatedButton(
-                      onPressed: _createTask,
+                      onPressed: _createProject,
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
                             ColorPicker.accent),
@@ -179,7 +180,7 @@ class _TaskCreateRouteState extends State<TaskCreateRoute> {
     Navigator.pop(context);
   }
 
-  void _createTask() async {
+  void _createProject() async {
     try {
       if (titleinput.text == "" ||
           depName == "" ||
@@ -196,17 +197,16 @@ class _TaskCreateRouteState extends State<TaskCreateRoute> {
         throw Exception("Please fill all the fields");
       }
 
-      Task task = new Task(
+      Project project = new Project(
           title: titleinput.text,
           description: descinput.text,
           status: 'Pending',
           startDate: DateTime.now(),
           endDate: end,
           dep: depName,
-          emp: []);
-      await DBHelper.addTask(task);
-      DBHelper.tasks.add(task);
-      DBHelper.projectTasks.add(task);
+          taskID: []);
+      await DBHelper.addProject(project);
+      DBHelper.projects.add(project);
       Navigator.pop(context);
       Navigator.pushAndRemoveUntil(
         context,

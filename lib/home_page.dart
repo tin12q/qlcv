@@ -5,12 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:qlcv/model/emp.dart';
 import 'model/db_helper.dart';
+
 //import 'model/task.dart';
 
 import 'route/dashboard.dart';
 import 'route/home.dart';
 import 'route/calendar.dart';
 import 'route/menu.dart';
+import 'route/projects.dart';
 import 'package:qlcv/model/color_picker.dart';
 
 class HomePage extends StatefulWidget {
@@ -25,6 +27,7 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> _widgetOptions = <Widget>[
     Dashboard(),
+    const Projects(),
     const Home(),
     const Calendar(),
     const Menu(),
@@ -32,12 +35,14 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> loadData() async {
     if (!_dataLoaded) {
+      DBHelper.reset();
       await DBHelper.getEmp();
       await DBHelper.getDep();
       await DBHelper.taskUpdate();
+      await DBHelper.getProject();
       DBHelper.initMap();
       DBHelper.updateTaskEMP();
-
+      DBHelper.projectTasks.clear();
       setState(() {
         _dataLoaded = true;
       });
@@ -67,13 +72,14 @@ class _HomePageState extends State<HomePage> {
             rippleColor: ColorPicker.primary,
             hoverColor: ColorPicker.accent,
             iconSize: 19,
-            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20), // Adjust the horizontal padding here
             duration: const Duration(milliseconds: 300),
             tabBackgroundColor: ColorPicker.accent,
             backgroundColor: ColorPicker.primary,
             tabs: _tabs,
             selectedIndex: 1,
-            onTabChange: (index) {
+            onTabChange: (index)  async {
+              await DBHelper.taskUpdate();
               setState(() {
                 _selectedIndex = index;
               });
@@ -90,6 +96,8 @@ class _HomePageState extends State<HomePage> {
       icon: CupertinoIcons.square_grid_2x2,
       iconSize: 25,
     ),
+    // GButton for Project
+    
     GButton(
       icon: CupertinoIcons.home,
       iconSize: 25,
@@ -110,7 +118,12 @@ class _HomePageState extends State<HomePage> {
       icon: Icons.dashboard_outlined,
     ),
     GButton(
+        icon: Icons.cases_outlined,
+        text: 'Project'
+    ),
+    GButton(
       icon: Icons.home_outlined,
+
       text: 'Home',
     ),
     GButton(

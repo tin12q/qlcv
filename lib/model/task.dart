@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 
+import 'db_helper.dart';
+
 class Task {
   String _id = '';
   String _title = '';
@@ -26,8 +28,11 @@ class Task {
   get emp => _emp;
   get empWidget {
     List<Widget> empWidget = [];
-    for (var emp in _emp) {
-      empWidget.add(Text(emp));
+    for (var empId in _emp) {
+      var emp = DBHelper.empMap[empId]; // Get the employee object from empMap
+      if (emp != null) {
+        empWidget.add(Text(emp.name)); // Use the employee name
+      }
     }
     return empWidget;
   }

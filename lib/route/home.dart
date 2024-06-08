@@ -36,28 +36,6 @@ class _HomeState extends State<Home> {
                 ),
               ),
               const SizedBox(width: 60),
-              SafeArea(
-                child: InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => TaskCreateRoute(),
-                      ),
-                    );
-                  },
-                  child: const CircleAvatar(
-                    backgroundColor: ColorPicker.accent,
-                    //size
-                    radius: 20,
-                    child: Icon(
-                      Icons.add,
-                      color: ColorPicker.primary,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 30),
             ],
           ),
         ),

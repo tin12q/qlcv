@@ -38,6 +38,9 @@ class _MenuState extends State<Menu> {
             const Text(
               'Menu',
             ),
+            // ElevatedButton(onPressed:
+            //     _pickAvatar,
+            //     child: const Text('Set Avatar')),
             ElevatedButton(
               onPressed: () {
                 logout(context);

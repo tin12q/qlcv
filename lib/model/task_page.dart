@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:qlcv/main.dart';
 import 'package:qlcv/model/db_helper.dart';
+import 'package:qlcv/route/project_tasks.dart';
 import '../home_page.dart';
+import '../route/home.dart';
 import 'color_picker.dart';
 import 'task.dart';
 import 'db_helper.dart';
@@ -33,6 +35,7 @@ class _TaskPageState extends State<TaskPage> {
 
     await DBHelper.updateTask(task);
     DBHelper.tasks.clear();
+    DBHelper.projectTasks.clear();
     await DBHelper.taskUpdate();
   }
 
@@ -41,6 +44,7 @@ class _TaskPageState extends State<TaskPage> {
   @override
   Widget build(BuildContext context) {
     // Create TextEditingController for each field
+
     final titleController = TextEditingController(text: task.title);
     final descriptionController = TextEditingController(text: task.description);
     final statusController = TextEditingController(text: task.status);
