@@ -14,8 +14,6 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> {
-  Uint8List? _avatarImage;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,24 +21,21 @@ class _MenuState extends State<Menu> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            if (DBHelper.mainUser.ava != null)
+            if (DBHelper.imageFile != null)
               CircleAvatar(
                 radius: 50,
-                backgroundImage: CachedNetworkImageProvider(DBHelper.mainUser.ava),
-              )
-            else
-              CircleAvatar(
-                radius: 50,
-                child: Icon(Icons.person),
+                backgroundImage: FileImage(DBHelper.imageFile!),
               ),
 
+
             const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _pickAvatar,
+              child: const Text('Set Avatar'),
+            ),
             const Text(
               'Menu',
             ),
-            // ElevatedButton(onPressed:
-            //     _pickAvatar,
-            //     child: const Text('Set Avatar')),
             ElevatedButton(
               onPressed: () {
                 logout(context);
@@ -61,17 +56,22 @@ class _MenuState extends State<Menu> {
 
     if (result != null) {
       // Get the path of the selected image file
-      String? imagePath = result.files.single.path;
+      DBHelper.imagePath = result.files.single.path;
 
       // Load the image file and update the avatar
-      if (imagePath != null) {
+      if (DBHelper.imagePath != null) {
         setState(() {
-          _avatarImage = File(imagePath).readAsBytesSync();
+          DBHelper.imageFile = File(DBHelper.imagePath!); // Set the imageFile in DBHelper to the selected image
         });
+
+        // Upload the image file
+        await DBHelper.saveImage();
+
+        // Update the avatar
+        setState(() {});
       }
     }
   }
-
 
   void logout(BuildContext context) async {
     DBHelper.reset();

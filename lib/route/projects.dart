@@ -16,6 +16,8 @@ class Projects extends StatefulWidget {
 }
 
 class _ProjectsState extends State<Projects> {
+  final TextEditingController _searchController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -38,7 +40,9 @@ class _ProjectsState extends State<Projects> {
                         ),
                       ),
                       const SizedBox(width: 60),
-                       DBHelper.mainUser.role == 'Admin' ? SafeArea(
+
+
+                       DBHelper.mainUser.role == 'admin' ? SafeArea(
                         child: InkWell(
                           onTap: () {
                             Navigator.push(
@@ -85,6 +89,31 @@ class _ProjectsState extends State<Projects> {
                        ),
                       const SizedBox(width: 30),
                     ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    width: 300, // Adjust the width as needed
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        labelText: 'Search',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0), // Adjust the border radius as needed
+                        ),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+
+                          DBHelper.projects = DBHelper.resProjects
+                              .where((project) => project.title
+                              .toLowerCase()
+                              .contains(value.toLowerCase()))
+                              .toList();
+                        });
+                      },
+                    ),
                   ),
                 ),
                 Expanded(

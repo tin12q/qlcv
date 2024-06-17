@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -19,7 +21,7 @@ class _DashboardState extends State<Dashboard> {
     return SafeArea(
         child: Scaffold(
       body: Column(children: [
-        const SizedBox(height: 10),
+        const SizedBox(height: 20),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: SizedBox(
@@ -79,17 +81,29 @@ class _DashboardState extends State<Dashboard> {
   // Helper method to get the chart data
   List<BarChartGroupData> _getChartData() {
     // Map to store the number of tasks and late tasks per department
+
+
     final taskCounts = <String, List<int>>{};
-    for (final task in DBHelper.tasks) {
-      if (!taskCounts.containsKey(task.dep)) {
-        taskCounts[task.dep] = [0, 0];
-      }
-      taskCounts[task.dep]![0]++;
-      if (task.status == 'Late') {
-        taskCounts[task.dep]![1]++;
+    for(var i = 0; i < min(DBHelper.deps.length, 3); i++) {
+      taskCounts[DBHelper.deps[i].name] = [0, 0];
+
+    }
+    for(var task in DBHelper.tasks) {
+      for(var proj in DBHelper.projects) {
+        if(proj.id == task.project) {
+          for(var dep in DBHelper.deps) {
+            if(taskCounts.containsKey(dep.name)){
+              if(dep.id == proj.dep) {
+                taskCounts[dep.name]![0]++;
+                if(task.status == 'late') {
+                  taskCounts[dep.name]![1]++;
+                }
+              }
+            }
+          }
+        }
       }
     }
-
     // Create the chart data from the taskCounts map
     final data = <BarChartGroupData>[];
 
@@ -126,7 +140,7 @@ class _DashboardState extends State<Dashboard> {
       BarChartData(
         alignment: BarChartAlignment.center,
         groupsSpace: 50,
-        maxY: 30,
+        maxY: 150,
         barGroups: _getChartData(),
         borderData: FlBorderData(
             border: const Border(bottom: BorderSide(), left: BorderSide())),

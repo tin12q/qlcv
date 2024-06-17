@@ -6,10 +6,12 @@ import 'package:qlcv/model/color_picker.dart';
 import 'package:qlcv/model/dep.dart';
 
 import '../home_page.dart';
+import '../main.dart';
 import '../model/db_helper.dart';
 import 'package:intl/intl.dart';
 import 'package:qlcv/model/task.dart';
 
+import '../model/emp.dart';
 import 'home.dart';
 
 class TaskCreateRoute extends StatefulWidget {
@@ -22,13 +24,25 @@ class _TaskCreateRouteState extends State<TaskCreateRoute> {
   TextEditingController dateinput = TextEditingController();
   TextEditingController titleinput = TextEditingController();
   TextEditingController descinput = TextEditingController();
+  Set<Employee> selectedEmployees = {};
+  List<String> employees = [];
   DateTime end = DateTime.now();
-  String depName = "";
+  String empName = "";
   @override
+
+
   void initState() {
     dateinput.text = "";
-    depName = ""; //set the initial value of text field
+    for(var emp in DBHelper.empProject){
+      for(var employee in DBHelper.employees){
+        if(emp == employee.id){
+          employees.add(employee.name);
+        }
+      }
+    }
+    empName = ""; //set the initial value of text field
     super.initState();
+    isPaused = true;
   }
 
 
@@ -71,22 +85,23 @@ class _TaskCreateRouteState extends State<TaskCreateRoute> {
               Row(
                 children: [
                   Expanded(
-                    //create a dropdown button  from the list of departments from DBHelper.deps
-                    child: DropdownButtonFormField<Dep>(
+                    child: DropdownButtonFormField<Employee>(
                       decoration: const InputDecoration(
-                        labelText: 'Department',
+                        labelText: 'Employee',
                       ),
-                      items: DBHelper.deps
-                          .map(
-                            (dep) => DropdownMenuItem<Dep>(
-                              value: dep,
-                              child: Text(dep.name),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: (value) {
+                      items: DBHelper.employees.map(
+                            (employee) => DropdownMenuItem<Employee>(
+                          value: employee,
+                          child: Text(employee.name),
+                        ),
+                      ).toList(),
+                      onChanged: (Employee? value) {
                         setState(() {
-                          depName = value!.name;
+                          selectedEmployees.clear();
+                          if (value != null) {
+                            selectedEmployees.add(value);
+                          }
+                          empName = value!.name;
                         });
                       },
                     ),
@@ -178,11 +193,15 @@ class _TaskCreateRouteState extends State<TaskCreateRoute> {
   void _back() {
     Navigator.pop(context);
   }
-
+  @override
+  void dispose() {
+    isPaused = false;
+    super.dispose();
+  }
   void _createTask() async {
     try {
       if (titleinput.text == "" ||
-          depName == "" ||
+          empName == "" ||
           dateinput.text == "" ||
           descinput.text == "") {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -195,15 +214,15 @@ class _TaskCreateRouteState extends State<TaskCreateRoute> {
         );
         throw Exception("Please fill all the fields");
       }
-
+      var empId = DBHelper.employees.firstWhere((element) => element.name == empName).id;
       Task task = new Task(
           title: titleinput.text,
           description: descinput.text,
-          status: 'Pending',
-          startDate: DateTime.now(),
+          status: 'in_progress',
+          project: DBHelper.currentProjectId,
           endDate: end,
-          dep: depName,
-          emp: []);
+          emp: [empId]);
+      //
       await DBHelper.addTask(task);
       DBHelper.tasks.add(task);
       DBHelper.projectTasks.add(task);

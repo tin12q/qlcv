@@ -27,8 +27,8 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> _widgetOptions = <Widget>[
     Dashboard(),
-    const Projects(),
     const Home(),
+    const Projects(),
     const Calendar(),
     const Menu(),
   ];
@@ -40,6 +40,7 @@ class _HomePageState extends State<HomePage> {
       await DBHelper.getDep();
       await DBHelper.taskUpdate();
       await DBHelper.getProject();
+      await DBHelper.getAvatar();
       DBHelper.initMap();
       DBHelper.updateTaskEMP();
       DBHelper.projectTasks.clear();
@@ -118,14 +119,15 @@ class _HomePageState extends State<HomePage> {
       icon: Icons.dashboard_outlined,
     ),
     GButton(
-        icon: Icons.cases_outlined,
-        text: 'Project'
-    ),
-    GButton(
       icon: Icons.home_outlined,
 
       text: 'Home',
     ),
+    GButton(
+        icon: Icons.cases_outlined,
+        text: 'Project'
+    ),
+
     GButton(
       icon: Icons.calendar_month_outlined,
       text: 'Calendar',

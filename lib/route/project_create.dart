@@ -7,6 +7,7 @@ import 'package:qlcv/model/dep.dart';
 import 'package:qlcv/route/projects.dart';
 
 import '../home_page.dart';
+import '../main.dart';
 import '../model/db_helper.dart';
 import 'package:intl/intl.dart';
 import 'package:qlcv/model/task.dart';
@@ -30,6 +31,7 @@ class _ProjectCreateRouteState extends State<ProjectCreateRoute> {
     dateinput.text = "";
     depName = ""; //set the initial value of text field
     super.initState();
+    isPaused = true;
   }
 
 
@@ -179,7 +181,11 @@ class _ProjectCreateRouteState extends State<ProjectCreateRoute> {
   void _back() {
     Navigator.pop(context);
   }
-
+  @override
+  void dispose() {
+    isPaused = false;
+    super.dispose();
+  }
   void _createProject() async {
     try {
       if (titleinput.text == "" ||
@@ -196,15 +202,16 @@ class _ProjectCreateRouteState extends State<ProjectCreateRoute> {
         );
         throw Exception("Please fill all the fields");
       }
+      await DBHelper.getDepIdByName(depName);
 
       Project project = new Project(
           title: titleinput.text,
           description: descinput.text,
           status: 'Pending',
-          startDate: DateTime.now(),
           endDate: end,
-          dep: depName,
-          taskID: []);
+          dep: DBHelper.currentProjectId,
+      );
+
       await DBHelper.addProject(project);
       DBHelper.projects.add(project);
       Navigator.pop(context);

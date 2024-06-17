@@ -24,12 +24,12 @@ class TaskPage extends StatefulWidget {
 class _TaskPageState extends State<TaskPage> {
   late Task task;
 
-  Future<void> updateTask(Task task, String title, String description, DateTime startDate, DateTime endDate, String status) async {
+  Future<void> updateTask(Task task, String title, String description, DateTime endDate, String status) async {
     DateFormat outputFormat = DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     task.title = title;
     task.description = description;
-    task.startDate = startDate;
+    // task.startDate = startDate;
     task.endDate = endDate;
     task.status = status;
 
@@ -66,7 +66,7 @@ class _TaskPageState extends State<TaskPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              DBHelper.mainUser.role == 'Admin' ? Container(
+              DBHelper.mainUser.role == 'admin' ? Container(
                 height: 25,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -96,7 +96,7 @@ class _TaskPageState extends State<TaskPage> {
                             TextButton(
                               child: const Text('Confirm'),
                               onPressed: () {
-                                updateTask(task, titleController.text, descriptionController.text, task.startDate, task.endDate, statusController.text);
+                                updateTask(task, titleController.text, descriptionController.text, task.endDate, statusController.text);
                                 Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(builder: (context) => HomePage()),
@@ -125,24 +125,24 @@ class _TaskPageState extends State<TaskPage> {
                 style: const TextStyle(fontSize: 16.0),
               ),
               const SizedBox(height: 16.0),
-              TextField(
-                readOnly: true,
-                controller: TextEditingController(text: DateFormat('d/M/yyyy').format(task.startDate)),
-                onTap: () async {
-                  final selectedDate = await showDatePicker(
-                    context: context,
-                    initialDate: task.startDate,
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime.now(),
-                  );
-                  if (selectedDate != null) {
-                    setState(() {
-                      task.startDate = selectedDate;
-                    });
-                  }
-                },
-                style: const TextStyle(fontSize: 16.0),
-              ),
+              // TextField(
+              //   readOnly: true,
+              //   controller: TextEditingController(text: DateFormat('d/M/yyyy').format(task.startDate)),
+              //   onTap: () async {
+              //     final selectedDate = await showDatePicker(
+              //       context: context,
+              //       initialDate: task.startDate,
+              //       firstDate: DateTime(2000),
+              //       lastDate: DateTime.now(),
+              //     );
+              //     if (selectedDate != null) {
+              //       setState(() {
+              //         task.startDate = selectedDate;
+              //       });
+              //     }
+              //   },
+              //   style: const TextStyle(fontSize: 16.0),
+              // ),
               const SizedBox(height: 16.0),
               TextField(
                 readOnly: true,

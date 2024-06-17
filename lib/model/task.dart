@@ -9,8 +9,7 @@ class Task {
   String _title = '';
   String _description = '';
   String _status = '';
-  String _dep = '';
-  DateTime _startDate = DateTime.now();
+  String _project = '';
   DateTime _endDate = DateTime.now();
   List<String> _emp = [];
 
@@ -18,11 +17,8 @@ class Task {
   get title => _title;
   get description => _description;
   get status => _status;
-  get startDate => _startDate;
   get endDate => _endDate;
-  get dep => _dep;
-  get startDateString =>
-      '${_startDate.day.toString()}/${_startDate.month.toString()}/${_startDate.year.toString()}';
+  get project => _project;
   get endDateString =>
       '${_endDate.day.toString()}/${_endDate.month.toString()}/${_endDate.year.toString()}';
   get emp => _emp;
@@ -41,32 +37,28 @@ class Task {
   set title(title) => _title = title;
   set description(description) => _description = description;
   set status(status) => _status = status;
-  set startDate(sdate) => _startDate = sdate;
   set endDate(edate) => _endDate = edate;
-  set dep(dep) => _dep = dep;
   set emp(emp) => _emp = emp;
-
+  set project(project) => _project = project;
   Task(
       { String? id,
         required String title,
       required String description,
       required String status,
-      required String dep,
-      required DateTime startDate,
+        required String project,
       required DateTime endDate,
       required List<String> emp}) {
     if(id != null) _id = id;
     _title = title;
     _description = description;
+    _project = project;
     _status = status;
-    _startDate = startDate;
     _endDate = endDate;
-    _dep = dep;
     _emp = emp;
   }
 
   @override
   String toString() {
-    return 'task{_title: $_title, _description: $_description, _status: $_status, _startDate: $_startDate, _endDate: $_endDate}, _emp: $_emp}';
+    return 'task{_title: $_title, _description: $_description, _status: $_status, _startDate: _endDate: $_endDate}, _emp: $_emp}';
   }
 }

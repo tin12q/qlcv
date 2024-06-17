@@ -79,7 +79,7 @@ class ProjectCard extends StatelessWidget {
                     ),
                     child: const Text('Info'),
                     onPressed: () async {
-                      await DBHelper.getDepName(project.dep);
+                      await DBHelper.getDepNameById(project.dep);
                       DBHelper.currentProjectId = project.id;
                       Navigator.push(
                           context,
@@ -91,7 +91,7 @@ class ProjectCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 6),
-                DBHelper.mainUser.role == 'Admin' ? Container(
+                DBHelper.mainUser.role == 'admin' ? Container(
                     height: 25,
                     child:   ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -263,20 +263,14 @@ class projectPopupCard extends StatelessWidget {
             ),
             const SizedBox(height: 10.0),
             Text(
-              'Department: ${project.dep}',
+              'Department: ${DBHelper.currentDepName}',
               style: const TextStyle(
                 color: ColorPicker.primary,
                 fontSize: 20.0,
               ),
             ),
             const SizedBox(height: 10.0),
-            Text(
-              'Start Date: ${project.startDateString}',
-              style: const TextStyle(
-                color: ColorPicker.primary,
-                fontSize: 20.0,
-              ),
-            ),
+
             const SizedBox(height: 10.0),
             Text(
               'End Date: ${project.endDateString}',

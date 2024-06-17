@@ -89,7 +89,7 @@ class TaskCard extends StatelessWidget {
                     ),
                 ),
                 const SizedBox(height: 6),
-                DBHelper.mainUser.role == 'Admin' ? Container(
+                DBHelper.mainUser.role == 'admin' ? Container(
                     height: 25,
                     child:   ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -260,21 +260,21 @@ class TaskPopupCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10.0),
-            Text(
-              'Department: ${task.dep}',
-              style: const TextStyle(
-                color: ColorPicker.primary,
-                fontSize: 20.0,
-              ),
-            ),
-            const SizedBox(height: 10.0),
-            Text(
-              'Start Date: ${task.startDateString}',
-              style: const TextStyle(
-                color: ColorPicker.primary,
-                fontSize: 20.0,
-              ),
-            ),
+            // Text(
+            //   'Department: ${task.dep}',
+            //   style: const TextStyle(
+            //     color: ColorPicker.primary,
+            //     fontSize: 20.0,
+            //   ),
+            // ),
+            // const SizedBox(height: 10.0),
+            // Text(
+            //   'Start Date: ${task.startDateString}',
+            //   style: const TextStyle(
+            //     color: ColorPicker.primary,
+            //     fontSize: 20.0,
+            //   ),
+            // ),
             const SizedBox(height: 10.0),
             Text(
               'End Date: ${task.endDateString}',

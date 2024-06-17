@@ -58,7 +58,7 @@ class _SignInPageState extends State<SignInPage> {
                                 ),
                                 labelStyle:
                                     TextStyle(color: ColorPicker.accent),
-                                labelText: 'Email',
+                                labelText: 'Username',
                               ),
                               cursorColor: ColorPicker.accent,
                               validator: (String? value) {

@@ -27,12 +27,11 @@ class ProjectPage extends StatefulWidget {
 class _ProjectPageState extends State<ProjectPage> {
   late Project project;
 
-  Future<void> updateProject(Project project, String title, String description, DateTime startDate, DateTime endDate, String status) async {
+  Future<void> updateProject(Project project, String title, String description, DateTime endDate, String status) async {
     DateFormat outputFormat = DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     project.title = title;
     project.description = description;
-    project.startDate = startDate;
     project.endDate = endDate;
     project.status = status;
 
@@ -70,7 +69,7 @@ class _ProjectPageState extends State<ProjectPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  DBHelper.mainUser.role == 'Admin' ? ElevatedButton(
+                  DBHelper.mainUser.role == 'admin' ? ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColorPicker.primary,
                       foregroundColor: ColorPicker.accent,
@@ -98,7 +97,7 @@ class _ProjectPageState extends State<ProjectPage> {
                               TextButton(
                                 child: const Text('Confirm'),
                                 onPressed: () {
-                                  updateProject(project, titleController.text, descriptionController.text, project.startDate, project.endDate, statusController.text);
+                                  updateProject(project, titleController.text, descriptionController.text, project.endDate, statusController.text);
                                   Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(builder: (context) => HomePage()),
@@ -123,6 +122,7 @@ class _ProjectPageState extends State<ProjectPage> {
                     child: Text('Tasks Details'),
                     onPressed: () async {
                       await DBHelper.taskUpdateWithProjectId(project.id);
+                      await DBHelper.getEmpByProjectId(DBHelper.currentProjectId);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -146,25 +146,7 @@ class _ProjectPageState extends State<ProjectPage> {
                 controller: descriptionController,
                 style: const TextStyle(fontSize: 16.0),
               ),
-              const SizedBox(height: 16.0),
-              TextField(
-                readOnly: true,
-                controller: TextEditingController(text: DateFormat('d/M/yyyy').format(project.startDate)),
-                onTap: () async {
-                  final selectedDate = await showDatePicker(
-                    context: context,
-                    initialDate: project.startDate,
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime.now(),
-                  );
-                  if (selectedDate != null) {
-                    setState(() {
-                      project.startDate = selectedDate;
-                    });
-                  }
-                },
-                style: const TextStyle(fontSize: 16.0),
-              ),
+
               const SizedBox(height: 16.0),
               TextField(
                 readOnly: true,
