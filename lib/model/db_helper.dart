@@ -592,8 +592,6 @@ class DBHelper {
         File file = File(filePath);
         await file.writeAsBytes(response.bodyBytes);
         imageFile = file;
-        print(imageFile);
-        print('Image downloaded and saved at ${file.path}');
       } else {
         throw Exception('Failed to get avatar.');
       }
