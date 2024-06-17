@@ -724,7 +724,17 @@ class DBHelper {
     empMap = {for (var e in employees) e.id: e};
     depMap = {for (var d in deps) d.name: d.emp};
   }
-
+  static void resetAndFetchData() async {
+    DBHelper.reset();
+    await DBHelper.getEmp();
+    await DBHelper.getDep();
+    await DBHelper.taskUpdate();
+    await DBHelper.getProject();
+    await DBHelper.getAvatar();
+    DBHelper.initMap();
+    DBHelper.updateTaskEMP();
+    DBHelper.projectTasks.clear();
+  }
   static reset() {
     employees.clear();
     deps.clear();
@@ -733,6 +743,5 @@ class DBHelper {
     tasks.clear();
     projects.clear();
     projectTasks.clear();
-
   }
 }

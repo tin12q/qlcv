@@ -44,6 +44,7 @@ class _HomePageState extends State<HomePage> {
       DBHelper.initMap();
       DBHelper.updateTaskEMP();
       DBHelper.projectTasks.clear();
+      DBHelper.reset();
       setState(() {
         _dataLoaded = true;
       });

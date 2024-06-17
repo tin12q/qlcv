@@ -60,15 +60,12 @@ class _MenuState extends State<Menu> {
 
       // Load the image file and update the avatar
       if (DBHelper.imagePath != null) {
+        await DBHelper.saveImage();
+        await DBHelper.getAvatar();
         setState(() {
           DBHelper.imageFile = File(DBHelper.imagePath!); // Set the imageFile in DBHelper to the selected image
         });
-
-        // Upload the image file
-        await DBHelper.saveImage();
-
         // Update the avatar
-        setState(() {});
       }
     }
   }
